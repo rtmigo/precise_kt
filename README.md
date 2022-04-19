@@ -48,7 +48,7 @@ dependencies {
 import io.github.rtmigo.summation.*  // Kotlin
 ```
 
-## Lambda functions with compensated sums
+# Lambda functions with compensated sums
 
 ```kotlin
 val sequence = listOf(1, 2, 3)
@@ -63,7 +63,7 @@ sequence.accurateMeanOf { it * 0.1 }  // equals 0.2
 val (stdev, mean) = sequence.accurateStdMeanOf { it * 0.1 }
 ```
 
-## Running compensated sum
+# Running compensated sum
 
 Running sum, immutable version:
 
@@ -95,7 +95,7 @@ sum.add(-0.2)                   // mutate the sum object
 println(sum.value)              // 5.4
 ```
 
-## Other functions
+# Other functions
 
 `kahanSumOf` implements Kahan [compensated summation algorithm](https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
 in its traditional form.
