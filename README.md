@@ -35,7 +35,9 @@ sourceControl {
 
 ```kotlin
 dependencies {
-    implementation("io.github.rtmigo:summation")
+    implementation("io.github.rtmigo:summation") {
+        version { branch = "staging" }
+    }
 }
 ```
 
