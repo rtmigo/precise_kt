@@ -1,7 +1,6 @@
 plugins {
     kotlin("jvm") version "1.6.20"
     id("java-library")
-//    jacoco
     java
 }
 
@@ -33,17 +32,12 @@ kotlin {
     sourceSets {
         val main by getting
         val test by getting
-//        val experiment by getting
     }
 }
 
-//tasks.jacocoTestReport {
-//    dependsOn(tasks.test) // tests are required to run before generating JaCoCo report
-//}
-//
+
 tasks.test {
     useJUnitPlatform()
-    //finalizedBy(tasks.jacocoTestReport) // JaCoCo report is always generated after tests run
 }
 
 tasks.register("updateReadmeVersion") {
@@ -64,12 +58,6 @@ tasks.build {
     dependsOn("updateReadmeVersion")
 }
 
-//tasks.jacocoTestReport {
-//    reports {
-//        xml.required.set(false)
-//        csv.required.set(true)
-//    }
-//}
 
 tasks.register<Jar>("uberJar") {
     archiveClassifier.set("uber")
