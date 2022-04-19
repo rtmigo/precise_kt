@@ -93,7 +93,7 @@ sum.add(-0.2)                   // mutate the sum object
 println(sum.value)              // 5.4
 ```
 
-## Kahan compensated sum
+## Other functions
 
 `kahanSumOf` implements Kahan [compensated summation algorithm](https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
 in its traditional form.
@@ -106,9 +106,7 @@ val sequence = listOf(1, 2, 3)
 println( sequence.kahanSumOf { it * 0.1 } )  // 0.6
 ```
 
-## Welford
-
-Calculates the arithmetic mean, avoiding overflow when summing too large
+`welfordMeanOf` calculates the arithmetic mean, avoiding overflow when summing too large
 values.
 
 ```kotlin
