@@ -65,7 +65,6 @@ class KahanSumTest {
         betaSumOf: SomethingOf<Double>,
         intSummands: Iterable<Int>,
         factor: Double = 0.1,
-        strict: Boolean,
     ) {
         val floatSummands = intSummands.map { it * factor }
 
@@ -92,7 +91,6 @@ class KahanSumTest {
             altSumOf,
             Iterable<Double>::sumOf,
             (1..100000).map { Random.nextInt(-1000, 1000) },
-            strict = true
         )
     }
 
@@ -190,14 +188,14 @@ class KahanSumTest {
     private fun sumByMutableKlein(s: Iterable<Double>, start: Double = 0.0): Double {
         val mutable = MutableAccurateSum(sum=start)
         mutable.add(s)
-        return mutable.toDouble()
+        return mutable.value
     }
 
     private fun sumByImmutableKleinOneByOne(s: Iterable<Double>, start: Double = 0.0): Double {
         // добавляем Double по одному
         var ks = AccurateSum(sum=start)
         s.forEach { ks+=it }
-        return ks.toDouble()
+        return ks.value
     }
 
     private fun sumByImmutableKleinPlusRandomPortions(s: Iterable<Double>, start: Double = 0.0): Double {
@@ -217,7 +215,7 @@ class KahanSumTest {
                 ks+=accumulator
         }
 
-        return ks.toDouble()
+        return ks.value
     }
 
     private fun <T> Iterator<T>.take(n: Int): List<T> {
@@ -247,7 +245,7 @@ class KahanSumTest {
                 ks-=accumulator
         }
 
-        return ks.toDouble()
+        return ks.value
     }
 
     @Test
@@ -343,4 +341,11 @@ class KahanSumTest {
         numbers.accurateSumOf { it }.shouldBe(1.0)
     }
 
+    @Test
+    fun zeroDoesNotMatter() {
+        //val numbers = listOf(0.1, 0.1, 0.1, 0.1, 0.1)
+        val seq = (1..1000).map { Random.nextDouble() }
+        val withZero = seq.toMutableList().apply { add(0.0); add(0.0); add(0.0) }
+        seq.accurateSumOf { it }.shouldBe(withZero.accurateSumOf { it })
+    }
 }
