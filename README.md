@@ -3,11 +3,7 @@
 
 # [summation](https://github.com/rtmigo/summation_kt#readme)
 
-```kotlin
-import io.github.rtmigo.summation.*  // Kotlin
-```
 
-## Compensated summation
 
 [Compensated summation](https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
 reduces numerical error when summing sequences of `Double`.
@@ -21,7 +17,35 @@ numbers.sumOf { it }         // 1.0000000000000002 (naive)
 numbers.accurateSumOf { it } // 1.0 (compensated)
 ```
 
-### Running compensated sum
+# Install
+
+#### settings.gradle.kts
+
+```kotlin
+sourceControl {
+    gitRepository(java.net.URI("https://github.com/rtmigo/summation_kt.git")) {
+        producesModule("io.github.rtmigo:summation")
+    }
+}
+```
+
+#### build.gradle.kts
+
+```kotlin
+dependencies {
+    implementation("io.github.rtmigo:summation")
+}
+```
+
+#### import
+
+
+```kotlin
+import io.github.rtmigo.summation.*  // Kotlin
+```
+
+
+## Running compensated sum
 
 The following functions implement "second-order iterative Kahan–Babuška algorithm" suggested by [Klein (2005)](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.582.288&rep=rep1&type=pdf).
 
@@ -55,7 +79,7 @@ sum.add(-0.2)                   // mutate the sum object
 println(sum.value)              // 5.4
 ```
 
-### Lambda functions with compensated sums
+## Lambda functions with compensated sums
 
 ```kotlin
 val sequence = listOf(1, 2, 3)
@@ -70,7 +94,7 @@ sequence.accurateMeanOf { it * 0.1 }  // equals 0.2
 val (stdev, mean) = sequence.accurateStdMeanOf { it * 0.1 }
 ```
 
-### Kahan compensated summation
+## Kahan compensated summation
 
 `kahanSumOf` implements Kahan [compensated summation algorithm](https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
 in its traditional form.
@@ -93,22 +117,3 @@ val sequence = listOf(1, 2, 3)
 println( sequence.welfordMeanOf { it * 0.1 } )  // 0.3
 ```
 
-# Install
-
-#### settings.gradle.kts
-
-```kotlin
-sourceControl {
-    gitRepository(java.net.URI("https://github.com/rtmigo/summation_kt.git")) {
-        producesModule("io.github.rtmigo:summation")
-    }
-}
-```
-
-#### build.gradle.kts
-
-```kotlin
-dependencies {
-    implementation("io.github.rtmigo:summation")
-}
-```
