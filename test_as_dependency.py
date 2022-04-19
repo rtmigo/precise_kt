@@ -2,19 +2,15 @@ import sys
 
 from tempp import *
 
-module="io.github.rtmigo:dec"
+module="io.github.rtmigo:summation"
 
-url="https://github.com/rtmigo/dec_kt"
+url="https://github.com/rtmigo/summation_kt"
 
 code="""
-    import io.github.rtmigo.dec.*
-    import kotlinx.serialization.*
-    import kotlinx.serialization.json.Json
+    import io.github.rtmigo.summation.*
 
     fun main() {
-        Json.encodeToString(Dec(5.23))
-
-        println(Dec(12.3))
+        println(listOf(1.0, 2.0).accurateSumOf {it})
     }
 """
 
@@ -30,7 +26,7 @@ with TempProject(
                 plugins {
                     id("application")
                     kotlin("jvm") version "1.6.20"
-                    id("org.jetbrains.kotlin.plugin.serialization") version "1.6.20"
+                    //id("org.jetbrains.kotlin.plugin.serialization") version "1.6.20"
                 }
 
                 repositories { mavenCentral() }
@@ -38,7 +34,7 @@ with TempProject(
 
                 dependencies {
                     implementation("__MODULE__") __IMP_DETAILS__
-                    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+                    //implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
                 }
             """.replace("__MODULE__", module).replace("__IMP_DETAILS__", imp_details),
 
@@ -67,6 +63,6 @@ with TempProject(
     print("-"*80)
 
     assert result.returncode == 0
-    assert result.stdout == "12.3\n", result.stdout
+    assert result.stdout == "3.0\n", result.stdout
 
 print("Everything is OK!")
