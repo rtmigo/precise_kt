@@ -1,6 +1,5 @@
 ![Generic badge](https://img.shields.io/badge/maturity-experimental-red.svg)
 ![Generic badge](https://img.shields.io/badge/JVM-8-blue.svg)
-![JaCoCo](https://raw.github.com/rtmigo/summation_kt/dev_updated_by_actions/.github/badges/jacoco.svg)
 
 # [summation](https://github.com/rtmigo/summation_kt#readme)
 
