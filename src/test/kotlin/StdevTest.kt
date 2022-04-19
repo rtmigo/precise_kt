@@ -1,4 +1,7 @@
-
+/**
+ * SPDX-FileCopyrightText: (c) 2022 Artёm Galkin <github.com/rtmigo>
+ * SPDX-License-Identifier: MIT
+ **/
 
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test

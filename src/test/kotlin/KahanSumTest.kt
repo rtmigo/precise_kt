@@ -1,11 +1,13 @@
-
+/**
+ * SPDX-FileCopyrightText: (c) 2022 Artёm Galkin <github.com/rtmigo>
+ * SPDX-License-Identifier: MIT
+ **/
 
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.doubles.*
 import io.kotest.matchers.shouldBe
 
 import org.junit.jupiter.api.Test
-import quantik.math.*
 import java.math.BigDecimal
 import kotlin.math.abs
 import kotlin.random.Random
