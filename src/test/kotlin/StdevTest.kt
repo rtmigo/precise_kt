@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  **/
 
+import io.github.rtmigo.summation.accurateStdMeanOf
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 

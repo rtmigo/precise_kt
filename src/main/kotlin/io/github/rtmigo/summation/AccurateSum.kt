@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  **/
 
+package io.github.rtmigo.summation
 
 import kotlin.math.abs
 

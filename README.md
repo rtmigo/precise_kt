@@ -1,8 +1,12 @@
 ![Generic badge](https://img.shields.io/badge/maturity-experimental-red.svg)
 ![Generic badge](https://img.shields.io/badge/JVM-8-blue.svg)
-![JaCoCo](https://raw.github.com/rtmigo/dec_kt/dev_updated_by_actions/.github/badges/jacoco.svg)
+![JaCoCo](https://raw.github.com/rtmigo/summation_kt/dev_updated_by_actions/.github/badges/jacoco.svg)
 
-# io.github.rtmigo : [summation](https://github.com/rtmigo/summation_kt#readme)
+# [summation](https://github.com/rtmigo/summation_kt#readme)
+
+```kotlin
+import io.github.rtmigo.summation.*  // Kotlin
+```
 
 ## Compensated summation
 

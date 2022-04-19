@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  **/
 
-
+package io.github.rtmigo.summation
 
 
 /**
