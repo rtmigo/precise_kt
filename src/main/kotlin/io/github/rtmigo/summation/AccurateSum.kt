@@ -55,8 +55,6 @@ inline fun <T> Iterable<T>.accurateSumOf(selector: (T) -> Double): Double {
     var sum = 0.0
     var cs = 0.0
     var ccs = 0.0
-    //var c = 0.0
-    //var cc = 0.0
 
     for (item in this) {
         val input = selector(item)
@@ -147,7 +145,7 @@ class MutableAccurateSum(
             cc = 0.0
         }
 
-    fun toDouble() = this.value
+    //fun toDouble() = this.value
 }
 
 /**
@@ -219,7 +217,7 @@ data class AccurateSum(
 
     val value: Double = sum + cs + ccs
 
-    fun toDouble() = value
+    //fun toDouble() = value
 
     operator fun minus(x: Double): AccurateSum = plus(-x)
     operator fun minus(x: Iterable<Double>): AccurateSum = plus(x.map { -it })
