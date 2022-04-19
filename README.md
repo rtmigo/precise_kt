@@ -17,6 +17,8 @@ numbers.sumOf { it }         // 1.0000000000000002 (naive)
 numbers.accurateSumOf { it } // 1.0 (compensated)
 ```
 
+Most of the functions use "second-order iterative Kahan–Babuška algorithm" suggested by [Klein (2005)](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.582.288&rep=rep1&type=pdf).
+
 # Install
 
 #### settings.gradle.kts
@@ -37,17 +39,29 @@ dependencies {
 }
 ```
 
-#### import
+#### Import in Kotlin code:
 
 
 ```kotlin
 import io.github.rtmigo.summation.*  // Kotlin
 ```
 
+## Lambda functions with compensated sums
+
+```kotlin
+val sequence = listOf(1, 2, 3)
+
+// sum
+sequence.accurateSumOf { it * 0.1 }  // equals 0.6
+
+// arithmetic mean
+sequence.accurateMeanOf { it * 0.1 }  // equals 0.2
+
+// standard deviation and mean
+val (stdev, mean) = sequence.accurateStdMeanOf { it * 0.1 }
+```
 
 ## Running compensated sum
-
-The following functions implement "second-order iterative Kahan–Babuška algorithm" suggested by [Klein (2005)](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.582.288&rep=rep1&type=pdf).
 
 Running sum, immutable version:
 
@@ -79,22 +93,7 @@ sum.add(-0.2)                   // mutate the sum object
 println(sum.value)              // 5.4
 ```
 
-## Lambda functions with compensated sums
-
-```kotlin
-val sequence = listOf(1, 2, 3)
-
-// sum
-sequence.accurateSumOf { it * 0.1 }  // equals 0.6
-
-// arithmetic mean
-sequence.accurateMeanOf { it * 0.1 }  // equals 0.2
-
-// standard deviation and mean
-val (stdev, mean) = sequence.accurateStdMeanOf { it * 0.1 }
-```
-
-## Kahan compensated summation
+## Kahan compensated sum
 
 `kahanSumOf` implements Kahan [compensated summation algorithm](https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
 in its traditional form.
