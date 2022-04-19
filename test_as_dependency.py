@@ -26,7 +26,6 @@ with TempProject(
                 plugins {
                     id("application")
                     kotlin("jvm") version "1.6.20"
-                    //id("org.jetbrains.kotlin.plugin.serialization") version "1.6.20"
                 }
 
                 repositories { mavenCentral() }
@@ -34,7 +33,6 @@ with TempProject(
 
                 dependencies {
                     implementation("__MODULE__") __IMP_DETAILS__
-                    //implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
                 }
             """.replace("__MODULE__", module).replace("__IMP_DETAILS__", imp_details),
 
