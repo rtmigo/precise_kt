@@ -13,7 +13,6 @@ tasks.register("pkgver") {
     }
 }
 
-
 repositories {
     mavenCentral()
 }
