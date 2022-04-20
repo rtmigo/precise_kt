@@ -2,7 +2,7 @@ import sys
 
 from tempp import *
 
-module="io.github.rtmigo:summation"
+module="io.github.rtmigo:precise"
 
 url="https://github.com/rtmigo/precise_kt"
 
