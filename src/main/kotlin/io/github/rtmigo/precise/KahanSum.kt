@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: (c) 2022 Artёm Galkin <github.com/rtmigo>
+ * SPDX-FileCopyrightText: (c) 2022 Artёm iG <github.com/rtmigo>
  * SPDX-License-Identifier: MIT
  **/
 
