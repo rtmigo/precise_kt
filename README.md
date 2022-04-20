@@ -56,7 +56,7 @@ sequence.preciseSumOf { it * 0.1 }  // equals 0.6
 sequence.preciseMeanOf { it * 0.1 }  // equals 0.2
 
 // standard deviation and mean
-val (stdev, mean) = sequence.preciseStdMeanOf { it * 0.1 }
+val (stdev, mean) = sequence.preciseStdevMean { it * 0.1 }
 ```
 
 # Running sum
