@@ -17,15 +17,15 @@ numbers.sumOf { it }        // 42.00000000000033 (naive sum)
 The table shows the total error when summing the same sequence of random
 numbers. In the **%** column, the error of `preciseSumOf` compared to `sumOf`.
 
-| Summands   | sumOf     | preciseSumOf | %     |
-|------------|-----------|--------------|-------|
-| 10         | 0.0000001 | 0.0          | 0%    |
-| 100        | 0.0000001 | 0.0          | 0%    |
-| 1,000      | 0.000001  | 0.0          | 0%    |
-| 10,000     | 0.000007  | 0.0000002    | 3.57% |
-| 100,000    | 0.00003   | 0.0          | 0%    |
-| 1,000,000  | 0.002     | 0.0          | 0%    |
-| 10,000,000 | 0.009     | 0.00006      | 0.67% |
+| Summands   | sumOf     | preciseSumOf | %      |
+|------------|-----------|--------------|--------|
+| 10         | 0.0000001 | 0.0000001    | 100.0% |
+| 100        | 0.000004  | 0.0          | 0.0%   |
+| 1,000      | 0.00003   | 0.000004     | 14.28% |
+| 10,000     | 0.00006   | 0.000004     | 6.25%  |
+| 100,000    | 0.0003    | 0.0          | 0.0%   |
+| 1,000,000  | 0.0004    | 0.00001      | 2.7%   |
+| 10,000,000 | 0.1       | 0.0002       | 0.18%  |
 
 Most of the functions use "second-order iterative Kahan–Babuška algorithm"
 suggested
