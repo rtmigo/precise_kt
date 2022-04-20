@@ -36,17 +36,33 @@ private fun Int.toGroupedString(): String =
 
         }.format(this)
 
-fun Double.round1000() = (this*10000).roundToInt()/10000.0
+fun Double.round10000() = (this*10000).roundToInt()/10000.0
+
+class ComputedError(seed: Int, count: Int) {
+    val r = Random(seed)
+
+    val terms = (1..count).map {r.nextDouble(-1E+8, 1E+8).round10000() } //
+    val ideal = terms.map { BigDecimal.valueOf(it) }.sumOf { it }.toDouble()
+    val errorNaive =  terms.sumOf { it } - ideal
+    val errorPrecise =  terms.preciseSumOf { it } - ideal
+
+}
 
 private fun compute(n: Int) {
     val count = 10.0.pow(n).toInt()
 
-    val r = Random(6)
+    val errors = (1..10).map { ComputedError(seed=it, count=count) }
 
-    val summands = (1..count).map {r.nextDouble(-1E+8, 1E+8).round1000() } //
-    val ideal = summands.map { BigDecimal.valueOf(it) }.sumOf { it }.toDouble()
-    val errorNaive =  summands.sumOf { it } - ideal
-    val errorPrecise =  summands.preciseSumOf { it } - ideal
+    val errorNaive =  errors.map { it.errorNaive }.average()
+    val errorPrecise =  errors.map { it.errorPrecise }.average()
+
+
+//    val r = Random(6)
+//
+//    val summands = (1..count).map {r.nextDouble(-1E+8, 1E+8).round10000() } //
+//    val ideal = summands.map { BigDecimal.valueOf(it) }.sumOf { it }.toDouble()
+//    val errorNaive =  summands.sumOf { it } - ideal
+//    val errorPrecise =  summands.preciseSumOf { it } - ideal
     println("${count.toGroupedString()} | ${abs(errorNaive).toSig()} | ${abs(errorPrecise).toSig()} | ${(errorPrecise/errorNaive).toPct()}")
 }
 
