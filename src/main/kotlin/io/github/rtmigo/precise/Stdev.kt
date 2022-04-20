@@ -8,14 +8,14 @@ package io.github.rtmigo.precise
 
 import kotlin.math.sqrt
 
-data class StdMean(val std: Double, val mean: Double)
+data class StdevMean(val stdev: Double, val mean: Double)
 
 /**
  * Calculate the standard deviation while compensating for floating point summation errors.
  **/
-inline fun <T> Collection<T>.preciseStdMeanOf(crossinline selector: (T) -> Double): StdMean {
+inline fun <T> Collection<T>.preciseStdevMeanOf(crossinline selector: (T) -> Double): StdevMean {
     if (this.isEmpty()) {
-        return StdMean(0.0, 0.0)
+        return StdevMean(0.0, 0.0)
     }
 
     val mean = this.preciseMeanOf(selector)
@@ -24,8 +24,11 @@ inline fun <T> Collection<T>.preciseStdMeanOf(crossinline selector: (T) -> Doubl
         x * x
     }
     val std = sqrt(squaredDiffs / this.size)
-    return StdMean(std, mean)
+    return StdevMean(std, mean)
 }
 
-@Deprecated("Obsolete", ReplaceWith("preciseStdMeanOf.std"))
-fun Collection<Double>.preciseStdev(): Double = this.preciseStdMeanOf { it }.std
+
+
+
+@Deprecated("Obsolete", ReplaceWith("preciseStdevMeanOf.stdev"))
+fun Collection<Double>.preciseStdev(): Double = this.preciseStdevMeanOf { it }.stdev
