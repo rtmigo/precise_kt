@@ -7,10 +7,10 @@ Implements [compensated summation](https://en.wikipedia.org/wiki/Kahan_summation
 for sequences of `Double`. Reduces rounding errors associated with limited precision of floating-point numbers.
 
 ```kotlin
-val numbers = listOf(0.1, 0.2, 0.1, 0.2, 0.1, 0.2, 0.1)
+val numbers = List(420) { 0.1 }  // 420 x 0.01
 
-numbers.sumOf { it }        // 1.0000000000000002 (naive)
-numbers.preciseSumOf { it } // 1.0 (compensated)
+numbers.preciseSumOf { it } // 42.0 (compensated sum)
+numbers.sumOf { it }        // 42.00000000000033 (naive sum)
 ```
 
 Most of the functions use "second-order iterative Kahan–Babuška algorithm" suggested by [Klein (2005)](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.582.288&rep=rep1&type=pdf).

@@ -328,18 +328,18 @@ class KahanSumTest {
 
     @Test
     fun experiment1() {
-        val numbers = List(100000) { 0.001 }
+        val numbers = List(420) { 0.1 }
 
-        numbers.preciseSumOf { it }.shouldBe(100.0)
-        numbers.sumOf { it }.shouldBe(100.00000000011343)
+        numbers.sumOf { it }.shouldBe(42.00000000000033)
+        numbers.preciseSumOf { it }.shouldBe(42.0)
     }
 
-    @Test
-    fun experiment2() {
-        val numbers = listOf(0.1, 0.2, 0.1, 0.2, 0.1, 0.2, 0.1)
-        numbers.sumOf { it }.shouldBe(1.0000000000000002)
-        numbers.preciseSumOf { it }.shouldBe(1.0)
-    }
+//    @Test
+//    fun experiment2() {
+//        val numbers = listOf(0.1, 0.2, -0.3)
+////        numbers.sumOf { it }.shouldBe(1.0000000000000002)
+//        numbers.preciseSumOf { it }.shouldBe(1.0)
+//    }
 
     @Test
     fun zeroDoesNotMatter() {
