@@ -13,30 +13,39 @@ fun <T> List<T>.cascadeSumOf(
     selector: (T) -> Double,
 ): Double {
     // https://en.wikipedia.org/wiki/Pairwise_summation
+    // todo unit test
 
-    assert(start <= end)
     val len = end - start + 1
-    assert(len >= 0)
 
     return if (len <= 3)
-        this.naiveSumOfFragment(start, end, selector)
+        this.sublistSumOf(start, end, selector)
     else {
         val m = len shr 1
 
-        val endA = start + m
+        // sample calculation (splitting 20..23):
+        //      start = 20
+        //      end = 23
+        //      len = 23-20+1 = 4
+        //      m = 2
+        //      endA = 20+2-1 = 21
+        //      startB = 21+1 = 22
+        // so we end with two intervals 20..21 and 22..23
+
+        val endA = start + m - 1
         val startB = endA + 1
 
         assert(start < endA)
         assert(endA < startB)
         assert(startB < end)
+        // two halves have same size or differ by 1
+        assert(abs((endA-start)-(end-startB))<=1)
 
         this.cascadeSumOf(start, endA, selector) +
             this.cascadeSumOf(startB, end, selector)
     }
-
 }
 
-private inline fun <T> List<T>.kahanSumOfFragment(
+private inline fun <T> List<T>.sublistKahanSumOf(
     start: Int = 0,
     end: Int = this.size,
     selector: (T) -> Double,
@@ -55,7 +64,7 @@ private inline fun <T> List<T>.kahanSumOfFragment(
     return sum
 }
 
-private inline fun <T> List<T>.kleinSumOfFragment(
+private inline fun <T> List<T>.sublistKleinSumOf(
     start: Int = 0,
     end: Int = this.size,
     selector: (T) -> Double,
@@ -95,7 +104,7 @@ private inline fun <T> List<T>.kleinSumOfFragment(
 }
 
 
-private inline fun <T> List<T>.naiveSumOfFragment(
+private inline fun <T> List<T>.sublistSumOf(
     start: Int = 0,
     end: Int = this.size,
     selector: (T) -> Double,
