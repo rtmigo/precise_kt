@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  **/
 
-package io.github.rtmigo.summation
+package io.github.rtmigo.precise
 
 
 import kotlin.math.sqrt
@@ -13,13 +13,13 @@ data class StdMean(val std: Double, val mean: Double)
 /**
  * Calculate the standard deviation while compensating for floating point summation errors.
  **/
-inline fun <T> Collection<T>.accurateStdMeanOf(crossinline selector: (T) -> Double): StdMean {
+inline fun <T> Collection<T>.preciseStdMeanOf(crossinline selector: (T) -> Double): StdMean {
     if (this.isEmpty()) {
         return StdMean(0.0, 0.0)
     }
 
-    val mean = this.accurateMeanOf(selector)
-    val squaredDiffs = this.accurateSumOf {
+    val mean = this.preciseMeanOf(selector)
+    val squaredDiffs = this.preciseSumOf {
         val x = selector(it) - mean
         x * x
     }
@@ -27,5 +27,5 @@ inline fun <T> Collection<T>.accurateStdMeanOf(crossinline selector: (T) -> Doub
     return StdMean(std, mean)
 }
 
-@Deprecated("Obsolete", ReplaceWith("accurateStdMeanOf.std"))
-fun Collection<Double>.accurateStdev(): Double = this.accurateStdMeanOf { it }.std
+@Deprecated("Obsolete", ReplaceWith("preciseStdMeanOf.std"))
+fun Collection<Double>.preciseStdev(): Double = this.preciseStdMeanOf { it }.std

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  **/
 
-import io.github.rtmigo.summation.welfordMeanOf
+import io.github.rtmigo.precise.welfordMeanOf
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  **/
 
-package io.github.rtmigo.summation
+package io.github.rtmigo.precise
 
 
 /**
@@ -23,7 +23,7 @@ inline fun <T> Iterable<T>.welfordMeanOf(selector: (T) -> Double): Double {
     // Ещё алгоритм можно превратить в "бегущее среднее" (возвращать сумму на каждом шаге).
 
 
-    val sum = MutableAccurateSum()
+    val sum = MutablePreciseSum()
 
     var i = 0
     for (x in this) {

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  **/
 
-package io.github.rtmigo.summation
+package io.github.rtmigo.precise
 
 /**
  * Kahan summation algorithm, also known as compensated summation, significantly reduces the

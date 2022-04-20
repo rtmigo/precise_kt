@@ -1,1 +1,1 @@
-rootProject.name = "summation"
+rootProject.name = "precise"

@@ -1,20 +1,16 @@
-![Generic badge](https://img.shields.io/badge/maturity-experimental-red.svg)
+![Generic badge](https://img.shields.io/badge/maturity-draft-red.svg)
 ![Generic badge](https://img.shields.io/badge/JVM-8-blue.svg)
 
-# [summation](https://github.com/rtmigo/summation_kt#readme)
+# [precise](https://github.com/rtmigo/precise_kt#readme)
 
-
-
-[Compensated summation](https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
-reduces numerical error when summing sequences of `Double`.
-
-This does not eliminate rounding errors, but reduces them by orders of magnitude.
+Implements [compensated summation](https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
+for sequences of `Double`. Reduces rounding errors associated with limited precision of floating-point numbers.
 
 ```kotlin
 val numbers = listOf(0.1, 0.2, 0.1, 0.2, 0.1, 0.2, 0.1)
 
-numbers.sumOf { it }         // 1.0000000000000002 (naive)
-numbers.accurateSumOf { it } // 1.0 (compensated)
+numbers.sumOf { it }        // 1.0000000000000002 (naive)
+numbers.preciseSumOf { it } // 1.0 (compensated)
 ```
 
 Most of the functions use "second-order iterative Kahan–Babuška algorithm" suggested by [Klein (2005)](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.582.288&rep=rep1&type=pdf).
@@ -25,8 +21,8 @@ Most of the functions use "second-order iterative Kahan–Babuška algorithm" su
 
 ```kotlin
 sourceControl {
-    gitRepository(java.net.URI("https://github.com/rtmigo/summation_kt.git")) {
-        producesModule("io.github.rtmigo:summation")
+    gitRepository(java.net.URI("https://github.com/rtmigo/precise_kt.git")) {
+        producesModule("io.github.rtmigo:precise")
     }
 }
 ```
@@ -35,7 +31,7 @@ sourceControl {
 
 ```kotlin
 dependencies {
-    implementation("io.github.rtmigo:summation") {
+    implementation("io.github.rtmigo:precise") {
         version { branch = "staging" }
     }
 }
@@ -45,54 +41,50 @@ dependencies {
 
 
 ```kotlin
-import io.github.rtmigo.summation.*  // Kotlin
+import io.github.rtmigo.precise.*  // Kotlin
 ```
 
-# Lambda functions with compensated sums
+# Lambda functions
 
 ```kotlin
 val sequence = listOf(1, 2, 3)
 
 // sum
-sequence.accurateSumOf { it * 0.1 }  // equals 0.6
+sequence.preciseSumOf { it * 0.1 }  // equals 0.6
 
 // arithmetic mean
-sequence.accurateMeanOf { it * 0.1 }  // equals 0.2
+sequence.preciseMeanOf { it * 0.1 }  // equals 0.2
 
 // standard deviation and mean
-val (stdev, mean) = sequence.accurateStdMeanOf { it * 0.1 }
+val (stdev, mean) = sequence.preciseStdMeanOf { it * 0.1 }
 ```
 
-# Running compensated sum
+# Running sum
 
 Running sum, immutable version:
 
 ```kotlin
-var sum = AccurateSum(5.0)  // 5.0 is optional starting value
+var sum = PreciseSum(5.0)  // 5.0 is optional starting value
 
-sum += 0.1               // create new object and reassign var
-sum += listOf(0.2, 0.3)  // create new object and reassign var
+sum += 0.1               
+sum += listOf(0.2, 0.3)  
+println(sum.value)  // 5.6
 
-println(sum.value)       // 5.6
-
-sum -= 0.2               // create new object and reassign var
-
-println(sum.value)       // 5.4
+sum -= 0.2               
+println(sum.value)  // 5.4
 ```
 
 Running sum, mutable version (faster):
 
 ```kotlin
-val sum = MutableAccurateSum(5.0)  // 5.0 is optional starting value
+val sum = MutablePreciseSum(5.0)  // 5.0 is optional starting value
 
-sum.add(0.1)                    // mutate the sum object
-sum.add(listOf(0.2, 0.3))       // mutate the sum object
+sum.add(0.1)     
+sum.add(listOf(0.2, 0.3))
+println(sum.value) // 5.6
 
-println(sum.value)              // 5.6
-
-sum.add(-0.2)                   // mutate the sum object
-
-println(sum.value)              // 5.4
+sum.add(-0.2)   
+println(sum.value)
 ```
 
 # Other functions
@@ -100,7 +92,7 @@ println(sum.value)              // 5.4
 `kahanSumOf` implements Kahan [compensated summation algorithm](https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
 in its traditional form.
 
-The calculation accuracy is slightly lower than `accurateSumOf` (by Klein),
+The calculation accuracy is slightly lower than `preciseSumOf` (by Klein),
 but still much better than the naive sum.
 
 ```kotlin
