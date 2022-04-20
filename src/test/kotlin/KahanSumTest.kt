@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  **/
 
-import io.github.rtmigo.summation.*
+import io.github.rtmigo.precise.*
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.doubles.*
 import io.kotest.matchers.shouldBe
@@ -37,7 +37,7 @@ class KahanSumTest {
     }
 
     @Test
-    fun kahanMoreAccurateThanNaive() {
+    fun kahanMorePreciseThanNaive() {
         val sequences = generateRandomSequences()
         val errKahan = sumsError(Iterable<Double>::kahanSumOf, sequences)
         val errNaive = sumsError(Iterable<Double>::sumOf, sequences)
@@ -45,18 +45,18 @@ class KahanSumTest {
     }
 
     @Test
-    fun kleinMoreAccurateThanNaive() {
+    fun kleinMorePreciseThanNaive() {
         val sequences = generateRandomSequences()
-        val errKlein = sumsError(Iterable<Double>::accurateSumOf, sequences)
+        val errKlein = sumsError(Iterable<Double>::preciseSumOf, sequences)
         val errNaive = sumsError(Iterable<Double>::sumOf, sequences)
         errKlein.shouldBeLessThan(errNaive)
     }
 
     @Test
-    fun kleinMoreAccurateThanKahan() {
+    fun kleinMorePreciseThanKahan() {
         val sequences = generateRandomSequences()
         val errKahan = sumsError(Iterable<Double>::kahanSumOf, sequences)
-        val errKlein = sumsError(Iterable<Double>::accurateSumOf, sequences)
+        val errKlein = sumsError(Iterable<Double>::preciseSumOf, sequences)
         errKlein.shouldBeLessThan(errKahan)
     }
 
@@ -101,7 +101,7 @@ class KahanSumTest {
 
     @Test
     fun checkKlein() {
-        checkSum(Iterable<Double>::accurateSumOf)
+        checkSum(Iterable<Double>::preciseSumOf)
     }
 
     @Test
@@ -112,17 +112,17 @@ class KahanSumTest {
         // [1.0,+10^100,1.0,-10^100] in double precision, Kahan's algorithm yields 0.0, whereas
         // Neumaier's algorithm yields the correct value 2.0.
         val values = listOf(1.0, 1E+100, 1.0, -1E+100)
-        values.accurateSumOf { it }.shouldBe(2.0)
+        values.preciseSumOf { it }.shouldBe(2.0)
         values.kahanSumOf { it }.shouldBe(0.0)
 
         // в менее драматичном случае такое не происходит
         val x = listOf(1.0, 1E+15, 1.0, -1E+15)
-        x.accurateSumOf { it }.shouldBe(2.0)
+        x.preciseSumOf { it }.shouldBe(2.0)
         x.kahanSumOf { it }.shouldBe(2.0)
 
         // на самом деле проблема при степени 16
         val y = listOf(1.0, 1E+16, 1.0, -1E+16)
-        y.accurateSumOf { it }.shouldBe(2.0)
+        y.preciseSumOf { it }.shouldBe(2.0)
         y.kahanSumOf { it }.shouldBe(0.0)
     }
 
@@ -179,21 +179,21 @@ class KahanSumTest {
         val sequences = generateRandomSequences()
 
         for (s in sequences) {
-            val reference = s.map { it.toDouble() }.accurateSumOf { it }
+            val reference = s.map { it.toDouble() }.preciseSumOf { it }
             val checking = sumFunc(s.map { it.toDouble() })
             checking.shouldBe(reference)
         }
     }
 
     private fun sumByMutableKlein(s: Iterable<Double>, start: Double = 0.0): Double {
-        val mutable = MutableAccurateSum(sum=start)
+        val mutable = MutablePreciseSum(sum=start)
         mutable.add(s)
         return mutable.value
     }
 
     private fun sumByImmutableKleinOneByOne(s: Iterable<Double>, start: Double = 0.0): Double {
         // добавляем Double по одному
-        var ks = AccurateSum(sum=start)
+        var ks = PreciseSum(sum=start)
         s.forEach { ks+=it }
         return ks.value
     }
@@ -203,7 +203,7 @@ class KahanSumTest {
         // добавляем иногда Double, а иногда Iterable<Double>
         // (иногда даже пустые последовательности)
 
-        var ks = AccurateSum(sum=start)
+        var ks = PreciseSum(sum=start)
 
         val iterator = s.iterator()
 
@@ -233,7 +233,7 @@ class KahanSumTest {
 
         val negatedItems = s.map { -it }.toList()
 
-        var ks = AccurateSum(sum=start)
+        var ks = PreciseSum(sum=start)
 
         val iterator = negatedItems.iterator()
 
@@ -307,7 +307,7 @@ class KahanSumTest {
     fun mutableSumReset() {
         val data = (1..100).map { Random.nextDouble() }
 
-        val running = MutableAccurateSum()
+        val running = MutablePreciseSum()
         running.value.shouldBe(0.0)
 
         running.add(data)
@@ -330,7 +330,7 @@ class KahanSumTest {
     fun experiment1() {
         val numbers = List(100000) { 0.001 }
 
-        numbers.accurateSumOf { it }.shouldBe(100.0)
+        numbers.preciseSumOf { it }.shouldBe(100.0)
         numbers.sumOf { it }.shouldBe(100.00000000011343)
     }
 
@@ -338,7 +338,7 @@ class KahanSumTest {
     fun experiment2() {
         val numbers = listOf(0.1, 0.2, 0.1, 0.2, 0.1, 0.2, 0.1)
         numbers.sumOf { it }.shouldBe(1.0000000000000002)
-        numbers.accurateSumOf { it }.shouldBe(1.0)
+        numbers.preciseSumOf { it }.shouldBe(1.0)
     }
 
     @Test
@@ -346,6 +346,6 @@ class KahanSumTest {
         //val numbers = listOf(0.1, 0.1, 0.1, 0.1, 0.1)
         val seq = (1..1000).map { Random.nextDouble() }
         val withZero = seq.toMutableList().apply { add(0.0); add(0.0); add(0.0) }
-        seq.accurateSumOf { it }.shouldBe(withZero.accurateSumOf { it })
+        seq.preciseSumOf { it }.shouldBe(withZero.preciseSumOf { it })
     }
 }

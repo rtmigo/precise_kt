@@ -2,15 +2,15 @@ import sys
 
 from tempp import *
 
-module="io.github.rtmigo:summation"
+module="io.github.rtmigo:precise"
 
-url="https://github.com/rtmigo/summation_kt"
+url="https://github.com/rtmigo/precise_kt"
 
 code="""
-    import io.github.rtmigo.summation.*
+    import io.github.rtmigo.precise.*
 
     fun main() {
-        println(listOf(1.0, 2.0).accurateSumOf {it})
+        println(listOf(1.0, 2.0).preciseSumOf {it})
     }
 """
 

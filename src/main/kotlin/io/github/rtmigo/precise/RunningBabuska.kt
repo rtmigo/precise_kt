@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  **/
 
-package io.github.rtmigo.summation
+package io.github.rtmigo.precise
 
 import kotlin.math.abs
 
@@ -15,13 +15,13 @@ import kotlin.math.abs
  * by A. Klein (2005), page 6 ("second order algorithm").
  *
  * @see [kahanSumOf]
- * @see [MutableAccurateSum]
- * @see [AccurateSum]
+ * @see [MutablePreciseSum]
+ * @see [PreciseSum]
  **/
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
-@JvmName("accurateSumOfDouble")
-inline fun <T> Iterable<T>.accurateSumOf(selector: (T) -> Double): Double {
+@JvmName("preciseSumOfDouble")
+inline fun <T> Iterable<T>.preciseSumOf(selector: (T) -> Double): Double {
 /*
     https://en.wikipedia.org/wiki/Kahan_summation_algorithm
     function KahanBabushkaKleinSum(input)
@@ -94,10 +94,10 @@ inline fun <T> Iterable<T>.accurateSumOf(selector: (T) -> Double): Double {
  * The algorithm is described [A Generalized Kahan-Babuška-Summation-Algorithm](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.582.288&rep=rep1&type=pdf)
  * by A. Klein (2005), page 6 ("second order algorithm").
  *
- * @see [AccurateSum]
- * @see [accurateSumOf]
+ * @see [PreciseSum]
+ * @see [preciseSumOf]
  **/
-class MutableAccurateSum(
+class MutablePreciseSum(
     var sum: Double = 0.0,
     internal var cs: Double = 0.0,
     internal var ccs: Double = 0.0,
@@ -156,24 +156,24 @@ class MutableAccurateSum(
  *      sum += listOf(2.3, 4.5)
  *      println(sum.toDouble())
  *
- * This is slightly slower than [MutableAccurateSum] because of the need to instantiate the class
+ * This is slightly slower than [MutablePreciseSum] because of the need to instantiate the class
  * on changes.
  *
  * The algorithm is described [A Generalized Kahan-Babuška-Summation-Algorithm](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.582.288&rep=rep1&type=pdf)
  * by A. Klein (2005), page 6 ("second order algorithm").
  *
- * @see [MutableAccurateSum]
- * @see [accurateSumOf]
+ * @see [MutablePreciseSum]
+ * @see [preciseSumOf]
  **/
-data class AccurateSum(
+data class PreciseSum(
     private val sum: Double = 0.0,
     private val cs: Double = 0.0,
     private val ccs: Double = 0.0,
     private val c: Double = 0.0,
     private val cc: Double = 0.0
 ) {
-    operator fun plus(x: Iterable<Double>): AccurateSum =
-        MutableAccurateSum(
+    operator fun plus(x: Iterable<Double>): PreciseSum =
+        MutablePreciseSum(
             sum = sum,
             cs = cs,
             ccs = ccs,
@@ -182,7 +182,7 @@ data class AccurateSum(
         ).let {
             it.add(x)
 
-            AccurateSum(
+            PreciseSum(
                 sum = it.sum,
                 cs = it.cs,
                 ccs = it.ccs,
@@ -191,7 +191,7 @@ data class AccurateSum(
             )
         }
 
-    operator fun plus(x: Double): AccurateSum {
+    operator fun plus(x: Double): PreciseSum {
         var t = sum + x
 
         val newC = if (abs(sum) >= abs(x)) {
@@ -219,11 +219,11 @@ data class AccurateSum(
 
     //fun toDouble() = value
 
-    operator fun minus(x: Double): AccurateSum = plus(-x)
-    operator fun minus(x: Iterable<Double>): AccurateSum = plus(x.map { -it })
+    operator fun minus(x: Double): PreciseSum = plus(-x)
+    operator fun minus(x: Iterable<Double>): PreciseSum = plus(x.map { -it })
 }
 
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
-inline fun <T> Collection<T>.accurateMeanOf(crossinline selector: (T) -> Double): Double =
-    this.meanByFuncOf(Iterable<T>::accurateSumOf, selector)
+inline fun <T> Collection<T>.preciseMeanOf(crossinline selector: (T) -> Double): Double =
+    this.meanByFuncOf(Iterable<T>::preciseSumOf, selector)
