@@ -58,7 +58,7 @@ class ComputedError(seed: Int, count: Int) {
 private fun compute(n: Int) {
     val count = 10.0.pow(n).toInt()
 
-    val errors = (1..5).map { ComputedError(seed = it, count = count) }
+    val errors = (1..10).map { ComputedError(seed = it, count = count) }
 
     val errorNaive = errors.map { it.errorNaive }.average()
     val errorPrecise = errors.map { it.errorPrecise }.average()
@@ -68,5 +68,5 @@ private fun compute(n: Int) {
 
 
 fun main() {
-    (1..5).forEach { compute(it) }
+    (1..6).forEach { compute(it) }
 }
