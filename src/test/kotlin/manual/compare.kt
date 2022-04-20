@@ -1,4 +1,4 @@
-import io.github.rtmigo.precise.preciseSumOf
+import io.github.rtmigo.precise.*
 import java.math.*
 import java.text.*
 import kotlin.math.*
@@ -48,15 +48,17 @@ class ComputedError(seed: Int, count: Int) {
 
     val terms = (1..count).map { r.nextDouble(-1E+6, 1E+6).round4() } //
     val ideal = terms.map { BigDecimal.valueOf(it) }.sumOf { it }.toDouble()
-    val errorNaive = terms.sumOf { it } - ideal
+    val errorNaive = terms.cascadeSumOf { it } - ideal
     val errorPrecise = terms.preciseSumOf { it } - ideal
+//    val errorNaive = terms.sumOf { it } - ideal
+//    val errorPrecise = terms.cascadeSumOf { it } - ideal
 
 }
 
 private fun compute(n: Int) {
     val count = 10.0.pow(n).toInt()
 
-    val errors = (1..10).map { ComputedError(seed = it, count = count) }
+    val errors = (1..5).map { ComputedError(seed = it, count = count) }
 
     val errorNaive = errors.map { it.errorNaive }.average()
     val errorPrecise = errors.map { it.errorPrecise }.average()
@@ -66,5 +68,5 @@ private fun compute(n: Int) {
 
 
 fun main() {
-    (1..6).forEach { compute(it) }
+    (1..5).forEach { compute(it) }
 }

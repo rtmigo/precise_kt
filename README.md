@@ -1,4 +1,4 @@
-![Generic badge](https://img.shields.io/badge/maturity-draft-red.svg)
+![Generic badge](https://img.shields.io/badge/maturity-wip-red.svg)
 ![Generic badge](https://img.shields.io/badge/JVM-8-blue.svg)
 
 # [precise](https://github.com/rtmigo/precise_kt#readme)
@@ -15,7 +15,8 @@ numbers.sumOf { it }        // 42.00000000000033 (naive sum)
 ```
 
 The table shows the total error when summing the same sequence of random
-numbers. All the terms were rounded to 0.0001 before addition. In the **%** column, the error of `preciseSumOf` compared to `sumOf`.
+numbers. All the terms were rounded to 0.0001 before addition. In the **%**
+column, the error of `preciseSumOf` compared to `sumOf`.
 
 | Terms     | err( sum )    | err( preciseSum ) | %      |
 |-----------|---------------|-------------------|--------|
@@ -108,15 +109,23 @@ println(sum.value)  // 5.4
 
 `kahanSumOf` implements
 Kahan [compensated summation algorithm](https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
-in its traditional form.
-
-The calculation accuracy is slightly lower than `preciseSumOf` (by Klein), but
-still much better than the naive sum.
+in its traditional form. The accuracy is lower than `preciseSumOf`, but better
+than the naive sum.
 
 ```kotlin
 val sequence = listOf(1, 2, 3)
-println(sequence.kahanSumOf { it * 0.1 })  // 0.6
+sequence.kahanSumOf { it * 0.1 }  // 0.6
 ```
+
+`cascadeSumOf`
+performs [pairwise summation](https://en.wikipedia.org/wiki/Pairwise_summation).
+The accuracy is lower than `preciseSumOf`, but better than the naive sum.
+
+```kotlin
+val sequence = listOf(1, 2, 3)
+sequence.cascadeSumOf { it * 0.1 }  // 0.6
+```
+
 
 `welfordMeanOf` calculates the arithmetic mean, avoiding overflow when summing
 too large values.
@@ -125,4 +134,6 @@ too large values.
 val sequence = listOf(1, 2, 3)
 println(sequence.welfordMeanOf { it * 0.1 })  // 0.3
 ```
+
+
 

@@ -27,6 +27,7 @@ inline fun <T> Iterable<T>.kahanSumOf(selector: (T) -> Double): Double {
 }
 
 
+
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 inline fun <T> Collection<T>.kahanMeanOf(crossinline selector: (T) -> Double): Double =
