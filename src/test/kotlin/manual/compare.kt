@@ -37,12 +37,13 @@ private fun Int.toGroupedString(): String =
         }.format(this)
 
 
+
 private fun compute(n: Int) {
     val count = 10.0.pow(n).toInt()
 
-    val r = Random(20)
+    val r = Random(1)
 
-    val summands = (1..count).map {r.nextInt()*0.1 }
+    val summands = (1..count).map {r.nextDouble(-1E+9, 1E+9) }
     val ideal = summands.map { BigDecimal.valueOf(it) }.sumOf { it }.toDouble()
     val errorNaive =  summands.sumOf { it } - ideal
     val errorPrecise =  summands.preciseSumOf { it } - ideal
