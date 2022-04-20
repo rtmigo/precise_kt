@@ -81,10 +81,10 @@ val sum = MutablePreciseSum(5.0)  // 5.0 is optional starting value
 
 sum.add(0.1)     
 sum.add(listOf(0.2, 0.3))
-println(sum.value) // 5.6
+println(sum.value)  // 5.6
 
 sum.add(-0.2)   
-println(sum.value)
+println(sum.value)  // 5.4
 ```
 
 # Other functions
