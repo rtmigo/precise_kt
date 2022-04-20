@@ -36,12 +36,12 @@ private fun Int.toGroupedString(): String =
 
         }.format(this)
 
-fun Double.round1000() = (this*1000).roundToInt()/1000.0
+fun Double.round1000() = (this*10000).roundToInt()/10000.0
 
 private fun compute(n: Int) {
     val count = 10.0.pow(n).toInt()
 
-    val r = Random(1)
+    val r = Random(6)
 
     val summands = (1..count).map {r.nextDouble(-1E+8, 1E+8).round1000() } //
     val ideal = summands.map { BigDecimal.valueOf(it) }.sumOf { it }.toDouble()
