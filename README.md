@@ -122,7 +122,7 @@ when summing them. However, even in the case of a pre-generated array, BigDecima
 
 `kahanSumOf` implements
 Kahan [compensated summation algorithm](https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
-in its traditional form. The accuracy is lower than `preciseSumOf`, but better
+in its traditional form. The accuracy is worse than `preciseSumOf`, but better
 than the naive sum.
 
 ```kotlin
@@ -132,7 +132,7 @@ sequence.kahanSumOf { it * 0.1 }  // 0.6
 
 `cascadeSumOf`
 performs [pairwise summation](https://en.wikipedia.org/wiki/Pairwise_summation).
-The accuracy is lower than `preciseSumOf`, but better than the naive sum.
+The accuracy is worse than `preciseSumOf`, but better than the naive sum.
 
 ```kotlin
 val sequence = listOf(1, 2, 3)
