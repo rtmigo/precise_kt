@@ -98,33 +98,30 @@ inline fun <T> Iterable<T>.preciseSumOf(selector: (T) -> Double): Double {
  * @see [preciseSumOf]
  **/
 class MutablePreciseSum(
-    var sum: Double = 0.0,
+    internal var sum: Double = 0.0,
     internal var cs: Double = 0.0,
     internal var ccs: Double = 0.0,
-    internal var c: Double = 0.0,
-    internal var cc: Double = 0.0
 ) {
     fun add(x: Iterable<Double>) =
         x.forEach { this.add(it) }
 
     fun add(x: Double) {
-
         var t = sum + x
 
-        if (abs(sum) >= abs(x)) {
-            c = (sum - t) + x
+        val c = if (abs(sum) >= abs(x)) {
+            (sum - t) + x
         }
         else {
-            c = (x - t) + sum
+            (x - t) + sum
         }
 
         sum = t
         t = cs + c
-        if (abs(cs) >= abs(c)) {
-            cc = (cs - t) + c
+        val cc = if (abs(cs) >= abs(c)) {
+            (cs - t) + c
         }
         else {
-            cc = (c - t) + cs
+            (c - t) + cs
         }
         cs = t
         ccs += cc
@@ -141,11 +138,7 @@ class MutablePreciseSum(
             sum = x
             cs = 0.0
             ccs = 0.0
-            c = 0.0
-            cc = 0.0
         }
-
-    //fun toDouble() = this.value
 }
 
 /**
@@ -169,16 +162,12 @@ data class PreciseSum(
     private val sum: Double = 0.0,
     private val cs: Double = 0.0,
     private val ccs: Double = 0.0,
-    private val c: Double = 0.0,
-    private val cc: Double = 0.0
 ) {
     operator fun plus(x: Iterable<Double>): PreciseSum =
         MutablePreciseSum(
             sum = sum,
             cs = cs,
             ccs = ccs,
-            c = c,
-            cc = cc
         ).let {
             it.add(x)
 
@@ -186,15 +175,13 @@ data class PreciseSum(
                 sum = it.sum,
                 cs = it.cs,
                 ccs = it.ccs,
-                c = it.c,
-                cc = it.cc
             )
         }
 
     operator fun plus(x: Double): PreciseSum {
         var t = sum + x
 
-        val newC = if (abs(sum) >= abs(x)) {
+        val c = if (abs(sum) >= abs(x)) {
             (sum - t) + x
         }
         else {
@@ -202,17 +189,17 @@ data class PreciseSum(
         }
 
         val newSum = t
-        t = cs + newC
-        val newCC = if (abs(cs) >= abs(newC)) {
-            (cs - t) + newC
+        t = cs + c
+        val newCC = if (abs(cs) >= abs(c)) {
+            (cs - t) + c
         }
         else {
-            (newC - t) + cs
+            (c - t) + cs
         }
         val newCs = t
         val newCcs = ccs + newCC
 
-        return copy(c = newC, sum = newSum, cs = newCs, ccs = newCcs)
+        return copy(sum = newSum, cs = newCs, ccs = newCcs)
     }
 
     val value: Double = sum + cs + ccs

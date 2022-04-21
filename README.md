@@ -111,12 +111,12 @@ when summing them. However, even in the case of a pre-generated array, BigDecima
 
 | Method                                     | Time    |
 |--------------------------------------------|---------|
-| `List<Double>.sumOf` (naive)               | 18 ms   |
+| `List<Double>.sumOf` (naive)               | 17 ms   |
 | `List<Double>.preciseSumOf`                | 48 ms   |
-| `MutablePreciseSum`                        | 53 ms   |
-| `PreciseSum` (immutable)                   | 85 ms   |
-| `List<BigDecimal>.sumOf`                   | 505 ms  |
-| `List<Double>.sumOf { it.toBigDecimal() }` | 3275 ms |
+| `MutablePreciseSum`                        | 50 ms   |
+| `PreciseSum` (immutable)                   | 75 ms   |
+| `List<BigDecimal>.sumOf`                   | 501 ms  |
+| `List<Double>.sumOf { it.toBigDecimal() }` | 3192 ms |
 
 # Other functions
 
