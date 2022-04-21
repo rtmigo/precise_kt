@@ -107,8 +107,7 @@ println(sum.value)  // 5.4
 # Benchmarks
 
 An alternative to compensated summation is to use BigDecimal: there is no error
-when summing them. However, even in the case of a pre-generated BigDecimal
-array, this works 5-10 times slower.
+when summing them. However, even in the case of a pre-generated array, BigDecimals are 5-10 times slower.
 
 | Method                                     | Time    |
 |--------------------------------------------|---------|
