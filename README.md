@@ -30,9 +30,7 @@ column, the error of `preciseSumOf` compared to `sumOf`.
 % is err(preciseSum) / err(sum)
 
 Most of the functions use "second-order iterative Kahan–Babuška algorithm"
-suggested
-by [А. Klein (2005)](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.582.288&rep=rep1&type=pdf)
-.
+by [Klein (2005)](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.582.288&rep=rep1&type=pdf).
 
 # Install
 
