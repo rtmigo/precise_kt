@@ -30,8 +30,7 @@ column, the error of `preciseSumOf` compared to `sumOf`.
 % is err(preciseSum) / err(sum)
 
 Most of the functions use "second-order iterative Kahan–Babuška algorithm"
-suggested
-by [А. Klein (2005)](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.582.288&rep=rep1&type=pdf)
+by [Klein (2005)](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.582.288&rep=rep1&type=pdf)
 .
 
 # Install
@@ -105,6 +104,20 @@ sum.add(-0.2)
 println(sum.value)  // 5.4
 ```
 
+# Benchmarks
+
+An alternative to compensated summation is to use BigDecimal: there is no error
+when summing them. However, even in the case of a pre-generated array, BigDecimals are 5-10 times slower.
+
+| Method                                     | Time    |
+|--------------------------------------------|---------|
+| `List<Double>.sumOf` (naive)               | 18 ms   |
+| `List<Double>.preciseSumOf`                | 48 ms   |
+| `MutablePreciseSum`                        | 53 ms   |
+| `PreciseSum` (immutable)                   | 85 ms   |
+| `List<BigDecimal>.sumOf`                   | 505 ms  |
+| `List<Double>.sumOf { it.toBigDecimal() }` | 3275 ms |
+
 # Other functions
 
 `kahanSumOf` implements
@@ -125,7 +138,6 @@ The accuracy is lower than `preciseSumOf`, but better than the naive sum.
 val sequence = listOf(1, 2, 3)
 sequence.cascadeSumOf { it * 0.1 }  // 0.6
 ```
-
 
 `welfordMeanOf` calculates the arithmetic mean, avoiding overflow when summing
 too large values.
