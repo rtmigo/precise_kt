@@ -3,6 +3,7 @@ import java.math.*
 import java.text.*
 import kotlin.math.*
 import kotlin.random.Random
+import kotlin.system.measureTimeMillis
 
 private val plainStringFormat = DecimalFormat(
     "0.0",
@@ -66,7 +67,74 @@ private fun compute(n: Int) {
     println("${count.toGroupedString()} | ${abs(errorNaive).toSig()} | ${abs(errorPrecise).toSig()} | ${(errorPrecise / errorNaive).toPct()}")
 }
 
+fun comparePrecision() {
+    (1..6).forEach { compute(it) }
+}
+
+fun benchmark() {
+    val count = 10000000
+    val r = Random(0)
+    val termsDouble = (1..count).map { r.nextDouble(-1E+6, 1E+6).round4() }
+    val termsDecimal = termsDouble.map { it.toBigDecimal() }
+
+    fun Iterable<Double>.sumByMutable() {
+        val s = MutablePreciseSum()
+        for (x in this)
+            s.add(x)
+    }
+
+    fun Iterable<Double>.sumByImmutable() {
+        var s = PreciseSum()
+        for (x in this)
+            s = s+x
+    }
+
+
+    for (i in 0..3) {
+
+        measureTimeMillis {
+            termsDouble.sumOf { it }
+        }.let {
+            println("`List<Double>.sumOf` | $it ms")
+        }
+
+
+        measureTimeMillis {
+            termsDouble.preciseSumOf { it }
+        }.let {
+            println("`List<Double>.preciseSumOf` | $it ms")
+        }
+
+        measureTimeMillis {
+            termsDouble.sumByMutable()
+        }.let {
+            println("`MutablePreciseSum` | $it ms")
+        }
+
+
+        measureTimeMillis {
+            termsDouble.sumByImmutable()
+        }.let {
+            println("`PreciseSum` | $it ms")
+        }
+
+        measureTimeMillis {
+            termsDecimal.sumOf { it }
+        }.let {
+            println("`List<BigDecimal>.sumOf` | $it ms")
+        }
+
+        measureTimeMillis {
+            termsDouble.sumOf { it.toBigDecimal() }.toDouble()
+        }.let {
+            println("`List<Double>.sumOf { it.toBigDecimal() }` | $it ms")
+        }
+
+
+    }
+}
+
 
 fun main() {
-    (1..6).forEach { compute(it) }
+    benchmark()
 }
