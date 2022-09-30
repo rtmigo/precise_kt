@@ -1,7 +1,8 @@
-/**
- * SPDX-FileCopyrightText: (c) 2022 Artёm IG <github.com/rtmigo>
+/*
+ * SPDX-FileCopyrightText: (c) 2022 Art Rtmigo <github.com/rtmigo>
  * SPDX-License-Identifier: MIT
- **/
+ */
+
 
 package io.github.rtmigo.precise
 
@@ -135,10 +136,10 @@ class MutablePreciseSum(
             sum + cs + ccs
 
     fun reset(x: Double) {
-            sum = x
-            cs = 0.0
-            ccs = 0.0
-        }
+        sum = x
+        cs = 0.0
+        ccs = 0.0
+    }
 }
 
 /**

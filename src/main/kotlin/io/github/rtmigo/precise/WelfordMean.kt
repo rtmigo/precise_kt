@@ -1,7 +1,9 @@
-/**
- * SPDX-FileCopyrightText: (c) 2022 Artёm IG <github.com/rtmigo>
+/*
+ * SPDX-FileCopyrightText: (c) 2022 Art Rtmigo <github.com/rtmigo>
  * SPDX-License-Identifier: MIT
- **/
+ */
+
+
 
 package io.github.rtmigo.precise
 

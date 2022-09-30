@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: (c) 2022 Art Rtmigo <github.com/rtmigo>
+ * SPDX-License-Identifier: MIT
+ */
+
 import io.github.rtmigo.precise.*
 
 fun Iterable<Double>.preciseSum() = this.preciseSumOf { it }  // TODO add unit-test
