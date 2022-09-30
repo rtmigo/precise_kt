@@ -1,7 +1,7 @@
-/**
- * SPDX-FileCopyrightText: (c) 2022 Artёm iG <github.com/rtmigo>
+/*
+ * SPDX-FileCopyrightText: (c) 2022 Art Rtmigo <github.com/rtmigo>
  * SPDX-License-Identifier: MIT
- **/
+ */
 
 package io.github.rtmigo.precise
 
@@ -25,7 +25,6 @@ inline fun <T> Iterable<T>.kahanSumOf(selector: (T) -> Double): Double {
     }
     return sum
 }
-
 
 
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
