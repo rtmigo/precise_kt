@@ -88,10 +88,12 @@ class KahanSumTest {
         listOf<Double>(12.34).altSumOf { it }.shouldBe(12.34)
         listOf<Double>(12.34, 0.01).altSumOf { it }.shouldBe(12.35)
 
+        val r = Random(123)
+
         checkAlphaBetterThanBeta(
             altSumOf,
             Iterable<Double>::sumOf,
-            (1..100000).map { Random.nextInt(-1000, 1000) },
+            (1..100000).map { r.nextInt(-1000, 1000) },
         )
     }
 
@@ -335,16 +337,8 @@ class KahanSumTest {
         numbers.preciseSumOf { it }.shouldBe(42.0)
     }
 
-//    @Test
-//    fun experiment2() {
-//        val numbers = listOf(0.1, 0.2, -0.3)
-////        numbers.sumOf { it }.shouldBe(1.0000000000000002)
-//        numbers.preciseSumOf { it }.shouldBe(1.0)
-//    }
-
     @Test
     fun zeroDoesNotMatter() {
-        //val numbers = listOf(0.1, 0.1, 0.1, 0.1, 0.1)
         val seq = (1..1000).map { Random.nextDouble() }
         val withZero = seq.toMutableList().apply { add(0.0); add(0.0); add(0.0) }
         seq.preciseSumOf { it }.shouldBe(withZero.preciseSumOf { it })

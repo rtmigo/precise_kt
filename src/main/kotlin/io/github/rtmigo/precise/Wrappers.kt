@@ -5,6 +5,11 @@
 
 import io.github.rtmigo.precise.*
 
+@ExperimentalApi
 fun Iterable<Double>.preciseSum() = this.preciseSumOf { it }  // TODO add unit-test
+
+@ExperimentalApi
 fun Collection<Double>.preciseMean() = this.preciseMeanOf { it }  // TODO add unit-test
+
+@ExperimentalApi
 fun Collection<Double>.preciseStdevMean() = this.preciseStdevMeanOf { it }  // TODO add unit-test
