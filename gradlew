@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 #
-# SPDX-FileCopyrightText: (c) 2022 Art Rtmigo <github.com/rtmigo>
+# SPDX-FileCopyrightText: (c) 2022 Artsiom iG <github.com/rtmigo>
 # SPDX-License-Identifier: MIT
 #
 
