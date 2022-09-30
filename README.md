@@ -1,4 +1,3 @@
-![Generic badge](https://img.shields.io/badge/maturity-wip-red.svg)
 ![Generic badge](https://img.shields.io/badge/JVM-8-blue.svg)
 
 # [precise](https://github.com/rtmigo/precise_kt#readme)
@@ -107,16 +106,17 @@ println(sum.value)  // 5.4
 # Benchmarks
 
 An alternative to compensated summation is to use BigDecimal: there is no error
-when summing them. However, even in the case of a pre-generated array, BigDecimals are 5-10 times slower.
+when summing them. However, even in the case of a pre-generated array,
+BigDecimals are 5-10 times slower.
 
-| Method                                     | Time    |
-|--------------------------------------------|---------|
-| `List<Double>.sumOf` (naive)               | 17 ms   |
-| `List<Double>.preciseSumOf`                | 48 ms   |
-| `MutablePreciseSum`                        | 50 ms   |
-| `PreciseSum` (immutable)                   | 75 ms   |
-| `List<BigDecimal>.sumOf`                   | 501 ms  |
-| `List<Double>.sumOf { it.toBigDecimal() }` | 3192 ms |
+| Type       | Method                                     | Kind    | Time    |
+|------------|--------------------------------------------|---------|---------|
+| Double     | `List<Double>.sumOf`                       | naive   | 17 ms   |
+| Double     | `List<Double>.preciseSumOf`                | precise | 48 ms   |
+| Double     | `MutablePreciseSum`                        | precise | 50 ms   |
+| Double     | `PreciseSum` (immutable)                   | precise | 75 ms   |
+| BigDecimal | `List<BigDecimal>.sumOf`                   | naive   | 501 ms  |
+| BigDecimal | `List<Double>.sumOf { it.toBigDecimal() }` | naive   | 3192 ms |
 
 # Other functions
 
@@ -146,8 +146,6 @@ too large values.
 val sequence = listOf(1, 2, 3)
 println(sequence.welfordMeanOf { it * 0.1 })  // 0.3
 ```
-
-
 
 ## License
 
