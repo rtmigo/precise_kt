@@ -3,10 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-
-
 package io.github.rtmigo.precise
-
 
 /**
  * Calculates the arithmetic mean, avoiding overflow when summing too large
@@ -14,8 +11,8 @@ package io.github.rtmigo.precise
  *
  * The method is popularized in "The Art of Computer Programming" by D.Knuth.
  **/
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
+//@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+//@OverloadResolutionByLambdaReturnType
 inline fun <T> Iterable<T>.welfordMeanOf(selector: (T) -> Double): Double {
     // Я взял алгоритм отсюда: https://stackoverflow.com/a/1934266/11700241
     // Описание нашёл и здесь: https://nullbuffer.com/articles/welford_algorithm.html
@@ -27,9 +24,8 @@ inline fun <T> Iterable<T>.welfordMeanOf(selector: (T) -> Double): Double {
 
     val sum = MutablePreciseSum()
 
-    var i = 0
-    for (x in this) {
-        sum.add((selector(x) - sum.value) / ++i)
+    for ((i, x) in this.withIndex()) {
+        sum.add((selector(x) - sum.value) / (i + 1))
     }
     return sum.value
 }

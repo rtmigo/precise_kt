@@ -10,8 +10,8 @@ package io.github.rtmigo.precise
  * numerical error in the total obtained by adding a sequence of finite-precision floating-point
  * numbers, compared to the obvious approach.
  **/
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
+//@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+//@OverloadResolutionByLambdaReturnType
 @JvmName("kahanSumOfDouble")
 inline fun <T> Iterable<T>.kahanSumOf(selector: (T) -> Double): Double {
     // https://rosettacode.org/wiki/Kahan_summation#Kotlin
@@ -27,8 +27,8 @@ inline fun <T> Iterable<T>.kahanSumOf(selector: (T) -> Double): Double {
 }
 
 
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
+//@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+//@OverloadResolutionByLambdaReturnType
 inline fun <T> Collection<T>.kahanMeanOf(crossinline selector: (T) -> Double): Double =
     this.meanByFuncOf(Iterable<T>::kahanSumOf, selector)
 

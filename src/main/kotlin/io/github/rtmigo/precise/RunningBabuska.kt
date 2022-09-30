@@ -19,9 +19,9 @@ import kotlin.math.abs
  * @see [MutablePreciseSum]
  * @see [PreciseSum]
  **/
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
-@JvmName("preciseSumOfDouble")
+//@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+//@OverloadResolutionByLambdaReturnType
+//@JvmName("preciseSumOfDouble")
 inline fun <T> Iterable<T>.preciseSumOf(selector: (T) -> Double): Double {
 /*
     https://en.wikipedia.org/wiki/Kahan_summation_algorithm
@@ -210,7 +210,7 @@ data class PreciseSum(
     operator fun minus(x: Iterable<Double>): PreciseSum = plus(x.map { -it })
 }
 
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
+//@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+//@OverloadResolutionByLambdaReturnType
 inline fun <T> Collection<T>.preciseMeanOf(crossinline selector: (T) -> Double): Double =
     this.meanByFuncOf(Iterable<T>::preciseSumOf, selector)
