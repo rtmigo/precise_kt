@@ -4,9 +4,7 @@
  */
 
 
-
 package io.github.rtmigo.precise
-
 
 import kotlin.math.sqrt
 
@@ -28,9 +26,6 @@ inline fun <T> Collection<T>.preciseStdevMeanOf(crossinline selector: (T) -> Dou
     val std = sqrt(squaredDiffs / this.size)
     return StdevMean(std, mean)
 }
-
-
-
 
 @Deprecated("Obsolete", ReplaceWith("preciseStdevMeanOf.stdev"))
 fun Collection<Double>.preciseStdev(): Double = this.preciseStdevMeanOf { it }.stdev
