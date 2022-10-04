@@ -205,11 +205,6 @@ tasks.test {
     useJUnitPlatform()
 }
 
-tasks.register("prop") {
-    doFirst {
-        println(project.findProperty("abc"))
-    }
-}
 
 tasks.register("updateReadmeVersion") {
     doFirst {
