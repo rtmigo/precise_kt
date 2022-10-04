@@ -35,9 +35,9 @@ by [Klein (2005)](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.582.
 
 # Install
 
-<details><summary>Install with Gradle from Maven Central</summary>
+<details><summary>Install from Maven Central with Gradle</summary>
 
-## Gradle (Kotlin)
+### build.gradle.kts (Gradle/Kotlin)
 
 ```kotlin
 repositories {
@@ -49,7 +49,9 @@ dependencies {
 }    
 ```
 
-## Gradle (Groovy)
+or
+
+### build.gradle (Gradle/Groovy)
 
 ```groovy
 repositories {
@@ -63,7 +65,7 @@ dependencies {
 
 </details>
 
-<details><summary>Install with Maven from Maven Central</summary>
+<details><summary>Install from Maven Central with Maven</summary>
 
 ## Maven
 
@@ -79,9 +81,7 @@ dependencies {
 
 </details>
 
-<details><summary>Install with Gradle from GitHub</summary>
-
-## Install latest from GitHub with Gradle (Kotlin)
+<details><summary>Install latest from GitHub with Gradle/Kotlin</summary>
 
 #### settings.gradle.kts
 

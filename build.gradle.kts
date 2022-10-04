@@ -235,8 +235,6 @@ fun LibVer.toGithubInstallationMd(
     branch: String = "staging",
 ) =
     """
-        ## Install latest from GitHub with Gradle (Kotlin)
-        
         #### settings.gradle.kts
         
         ```kotlin
@@ -270,7 +268,7 @@ fun String.toSpoiler(summary: String) =
 
 fun LibVer.toGradleInstallationMd() =
     """
-        ## Gradle (Kotlin)
+        ### build.gradle.kts (Gradle/Kotlin)
         
         ```kotlin
         repositories {
@@ -282,7 +280,9 @@ fun LibVer.toGradleInstallationMd() =
         }    
         ```
         
-        ## Gradle (Groovy)
+        or
+        
+        ### build.gradle (Gradle/Groovy)
         
         ```groovy
         repositories {
@@ -325,11 +325,11 @@ fun String.replaceSectionInMd(
 fun updateReadmeWithInstallationInstructions(readmeFile: File, githubUrl: String) {
     val instructionsMd =
         project.toLibVer().toGradleInstallationMd()
-            .toSpoiler("Install with Gradle from Maven Central") + "\n\n" +
+            .toSpoiler("Install from Maven Central with Gradle") + "\n\n" +
             project.toLibVer().toMavenInstallationMd()
-                .toSpoiler("Install with Maven from Maven Central") + "\n\n" +
+                .toSpoiler("Install from Maven Central with Maven") + "\n\n" +
             project.toLibVer().toGithubInstallationMd(githubUrl)
-                .toSpoiler("Install with Gradle from GitHub") + "\n\n"
+                .toSpoiler("Install latest from GitHub with Gradle/Kotlin") + "\n\n"
 
     readmeFile.writeText(
         readmeFile.readText().replaceSectionInMd("Install", instructionsMd)
