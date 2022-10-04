@@ -1,3 +1,5 @@
+<details><summary>with Gradle from Maven Central</summary>
+
 ## Gradle (Kotlin)
 
 ```kotlin
@@ -22,23 +24,27 @@ dependencies {
 }
 ```
 
-<details>
-  <summary>Maven</summary>
-     
-    ## Maven
-    
-    ```xml    
-    <dependencies>
-        <dependency>
-            <groupId>io.github.rtmigo</groupId>
-            <artifactId>precise</artifactId>
-            <version>0.0.0</version>
-        </dependency>
-    </dependencies>
-    ```
 </details>
 
-## Latest (Kotlin Gradle) 
+<details><summary>with Maven from Maven Central</summary>
+
+## Maven
+
+```xml    
+<dependencies>
+    <dependency>
+        <groupId>io.github.rtmigo</groupId>
+        <artifactId>precise</artifactId>
+        <version>0.0.0</version>
+    </dependency>
+</dependencies>
+```
+
+</details>
+
+<details><summary>with Gradle from GitHub</summary>
+
+## Install latest from GitHub with Gradle (Kotlin)
 
 #### settings.gradle.kts
 
@@ -59,3 +65,5 @@ dependencies {
     }
 }
 ```
+
+</details>

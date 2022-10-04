@@ -233,7 +233,7 @@ fun Project.toLibVer() =
 fun LibVer.toGithubInstallationMd(repoUrl: String,
                                   branch: String = "staging") =
     """
-        ## Latest (Kotlin Gradle) 
+        ## Install latest from GitHub with Gradle (Kotlin)
         
         #### settings.gradle.kts
         
@@ -255,6 +255,16 @@ fun LibVer.toGithubInstallationMd(repoUrl: String,
         }
         ```
     """.trimIndent()
+
+//         <details>
+//          <summary>Latest (Kotlin Gradle)</summary>
+//        </details>
+//
+//
+//
+
+fun String.toSpoiler(summary: String) =
+    "<details><summary>$summary</summary>\n\n$this\n\n</details>"
 
 fun LibVer.toGradleInstallationMd() =
     """
@@ -285,22 +295,26 @@ fun LibVer.toGradleInstallationMd() =
 
 fun LibVer.toMavenInstallationMd() =
     """
-    <details>
-      <summary>Maven</summary>     
-         
-        ## Maven
-        
-        ```xml    
-        <dependencies>
-            <dependency>
-                <groupId>$group</groupId>
-                <artifactId>$artifact</artifactId>
-                <version>$version</version>
-            </dependency>
-        </dependencies>
+    ## Maven
+    
+    ```xml    
+    <dependencies>
+        <dependency>
+            <groupId>$group</groupId>
+            <artifactId>$artifact</artifactId>
+            <version>$version</version>
+        </dependency>
+    </dependencies>
     ```
-    </details>
     """.trimIndent()
+
+
+fun String.replaceSectionInMd(
+    sectionTitle: String,
+    newSectionText: String) =// "#".toRegex().replace(this, newSectionText)
+    "([\n\r]#\\s+$sectionTitle\\s*[\n\r]).*?([\n\r]#\\s)".toRegex(RegexOption.DOT_MATCHES_ALL)
+        .replace(this) { it.groups[1]!!.value+newSectionText+ it.groups[2]!!.value}
+
 
 
 tasks.register("genInstallation") {
@@ -315,14 +329,21 @@ tasks.register("genInstallation") {
 
         val code =
 
-                project.toLibVer().toGradleInstallationMd()+"\n\n"+
-                project.toLibVer().toMavenInstallationMd()+"\n\n"+
-                project.toLibVer().toGithubInstallationMd("https://github.com/rtmigo/precise_kt")
+                project.toLibVer().toGradleInstallationMd().toSpoiler("with Gradle from Maven Central")+"\n\n"+
+                project.toLibVer().toMavenInstallationMd().toSpoiler("with Maven from Maven Central")+"\n\n"+
+                project.toLibVer().toGithubInstallationMd("https://github.com/rtmigo/precise_kt").toSpoiler("with Gradle from GitHub")+"\n\n"
 
-        project.projectDir.resolve("doc").mkdirs()
-        project.projectDir.resolve("doc/install.md").writeText(
-            code
+        val readme = project.projectDir.resolve("README.md")
+        val readmeNew = project.projectDir.resolve("README.new.md")
+        readmeNew.writeText(
+        readme.readText().replaceSectionInMd("Install", code)
         )
+
+
+//        project.projectDir.resolve("doc").mkdirs()
+//        project.projectDir.resolve("doc/install.md").writeText(
+//            code
+//        )
         //project
 //        // найдем что-то вроде "io.github.rtmigo:dec:0.0.1"
 //        // и поменяем на актуальную версию
