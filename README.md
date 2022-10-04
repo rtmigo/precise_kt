@@ -1,13 +1,11 @@
 ![Generic badge](https://img.shields.io/badge/JVM-8-blue.svg)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.rtmigo/precise.svg)](https://search.maven.org/artifact/io.github.rtmigo/precise)
 
 # [precise](https://github.com/rtmigo/precise_kt#readme)
 
 Implements [compensated summation](https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
 for sequences of `Double`. Reduces rounding errors associated with limited
 precision of floating-point numbers.
-
-artsiom.ig@gmail.com
-ortemeo@gmail.com
 
 ```kotlin
 val numbers = List(420) { 0.1 }  // 420 x 0.01
