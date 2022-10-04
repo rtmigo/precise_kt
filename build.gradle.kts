@@ -219,6 +219,122 @@ tasks.register("updateReadmeVersion") {
     }
 }
 
+data class LibVer(val group: String, val artifact: String, val version: String)
+
+fun Project.toLibVer() =
+    LibVer(
+        group = this.group.toString(),
+        artifact = this.name,
+        version = """[0-9\.]+""".toRegex()
+            .find(this.version.toString())!!
+            .groupValues.single()
+    )
+
+fun LibVer.toGithubInstallationMd(repoUrl: String,
+                                  branch: String = "staging") =
+    """
+        ## Latest (Kotlin Gradle) 
+        
+        #### settings.gradle.kts
+        
+        ```kotlin
+        sourceControl {
+            gitRepository(java.net.URI("$repoUrl.git")) {
+                producesModule("${this.group}:${this.artifact}")
+            }
+        }
+        ```
+        
+        #### build.gradle.kts
+        
+        ```kotlin
+        dependencies {
+            implementation("${this.group}:${this.artifact}") {
+                version { branch = "$branch" }
+            }
+        }
+        ```
+    """.trimIndent()
+
+fun LibVer.toGradleInstallationMd() =
+    """
+        ## Gradle (Kotlin)
+        
+        ```kotlin
+        repositories {
+            mavenCentral()
+        }                
+        
+        dependencies {
+            implementation("$group:$artifact:$version")
+        }    
+        ```
+        
+        ## Gradle (Groovy)
+        
+        ```groovy
+        repositories {
+            mavenCentral()
+        }                
+        
+        dependencies {
+            implementation "$group:$artifact:$version"
+        }
+        ```
+    """.trimIndent()
+
+fun LibVer.toMavenInstallationMd() =
+    """
+    <details>
+      <summary>Maven</summary>     
+         
+        ## Maven
+        
+        ```xml    
+        <dependencies>
+            <dependency>
+                <groupId>$group</groupId>
+                <artifactId>$artifact</artifactId>
+                <version>$version</version>
+            </dependency>
+        </dependencies>
+    ```
+    </details>
+    """.trimIndent()
+
+
+tasks.register("genInstallation") {
+    doFirst {
+//        val pkgGroup = project.group.toString()
+//        val pkgLib = project.name
+//        val pkgVer = """[0-9\.]+""".toRegex()
+//            .find(project.version.toString())!!
+//            .groupValues.single()
+
+
+
+        val code =
+
+                project.toLibVer().toGradleInstallationMd()+"\n\n"+
+                project.toLibVer().toMavenInstallationMd()+"\n\n"+
+                project.toLibVer().toGithubInstallationMd("https://github.com/rtmigo/precise_kt")
+
+        project.projectDir.resolve("doc").mkdirs()
+        project.projectDir.resolve("doc/install.md").writeText(
+            code
+        )
+        //project
+//        // найдем что-то вроде "io.github.rtmigo:dec:0.0.1"
+//        // и поменяем на актуальную версию
+//        val readmeFile = project.rootDir.resolve("README.md")
+//        val prefixToFind = "io.github.rtmigo:precise:"
+//        val regex = """(?<=${Regex.escape(prefixToFind)})[0-9\.+]+""".toRegex()
+//        val oldText = readmeFile.readText()
+//        val newText = regex.replace(oldText, project.version.toString())
+//        if (newText != oldText) readmeFile.writeText(newText)
+    }
+}
+
 tasks.build {
     dependsOn("updateReadmeVersion")
 }
