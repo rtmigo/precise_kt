@@ -6,6 +6,9 @@ Implements [compensated summation](https://en.wikipedia.org/wiki/Kahan_summation
 for sequences of `Double`. Reduces rounding errors associated with limited
 precision of floating-point numbers.
 
+artsiom.ig@gmail.com
+ortemeo@gmail.com
+
 ```kotlin
 val numbers = List(420) { 0.1 }  // 420 x 0.01
 

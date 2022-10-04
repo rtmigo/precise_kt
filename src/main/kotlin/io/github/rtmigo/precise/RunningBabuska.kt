@@ -24,7 +24,7 @@ import kotlin.math.abs
 //@JvmName("preciseSumOfDouble")
 inline fun <T> Iterable<T>.preciseSumOf(selector: (T) -> Double): Double {
 /*
-    https://en.wikipedia.org/wiki/Kahan_summation_algorithm
+    Original from https://en.wikipedia.org/wiki/Kahan_summation_algorithm
     function KahanBabushkaKleinSum(input)
         var sum = 0.0
         var cs  = 0.0
