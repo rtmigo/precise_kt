@@ -1,3 +1,5 @@
+//import io.github.rtmigo.vinogradle.readme.*
+
 plugins {
     kotlin("jvm") version "1.7.20"
     id("org.jetbrains.dokka") version "1.7.10"
@@ -8,7 +10,12 @@ plugins {
 
     id("java-library")
     java
+//    hello
+
+    //id("convention.readme")
 }
+
+
 
 
 group = "io.github.rtmigo"
@@ -219,131 +226,31 @@ tasks.register("updateReadmeVersion") {
     }
 }
 
-data class LibVer(val group: String, val artifact: String, val version: String)
-
-fun Project.toLibVer() =
-    LibVer(
-        group = this.group.toString(),
-        artifact = this.name,
-        version = """[0-9\.]+""".toRegex()
-            .find(this.version.toString())!!
-            .groupValues.single()
-    )
-
-fun LibVer.toGithubInstallationMd(
-    repoUrl: String,
-    branch: String = "staging",
-) =
-    """
-        #### settings.gradle.kts
-        
-        ```kotlin
-        sourceControl {
-            gitRepository(java.net.URI("$repoUrl.git")) {
-                producesModule("${this.group}:${this.artifact}")
-            }
-        }
-        ```
-        
-        #### build.gradle.kts
-        
-        ```kotlin
-        dependencies {
-            implementation("${this.group}:${this.artifact}") {
-                version { branch = "$branch" }
-            }
-        }
-        ```
-    """.trimIndent()
-
-//         <details>
-//          <summary>Latest (Kotlin Gradle)</summary>
-//        </details>
-//
-//
-//
-
-fun String.toSpoiler(summary: String) =
-    "<details><summary>$summary</summary>\n\n$this\n\n</details>"
-
-fun LibVer.toGradleInstallationMd() =
-    """
-        ### build.gradle.kts (Gradle/Kotlin)
-        
-        ```kotlin
-        repositories {
-            mavenCentral()
-        }                
-        
-        dependencies {
-            implementation("$group:$artifact:$version")
-        }    
-        ```
-        
-        or
-        
-        ### build.gradle (Gradle/Groovy)
-        
-        ```groovy
-        repositories {
-            mavenCentral()
-        }                
-        
-        dependencies {
-            implementation "$group:$artifact:$version"
-        }
-        ```
-    """.trimIndent()
-
-fun LibVer.toMavenInstallationMd() =
-    """
-    ## Maven
-    
-    ```xml    
-    <dependencies>
-        <dependency>
-            <groupId>$group</groupId>
-            <artifactId>$artifact</artifactId>
-            <version>$version</version>
-        </dependency>
-    </dependencies>
-    ```
-    """.trimIndent()
+//hello {
+//    greeting = "Привет"
+//    name = "Бадя-бадя"
+//}
 
 
-/** Replaces text between "# Title" and "# Next Title". */
-fun String.replaceSectionInMd(
-    sectionTitle: String,
-    newSectionText: String,
-) =
-    "([\n\r]#\\s+$sectionTitle\\s*[\n\r]).*?([\n\r]#\\s)"
-        .toRegex(RegexOption.DOT_MATCHES_ALL)
-        .replace(this) {
-            it.groups[1]!!.value + newSectionText + it.groups[2]!!.value
-        }
-
-fun updateReadmeWithInstallationInstructions(readmeFile: File, githubUrl: String) {
-    val instructionsMd =
-        project.toLibVer().toGradleInstallationMd()
-            .toSpoiler("Install from Maven Central with Gradle") + "\n\n" +
-            project.toLibVer().toMavenInstallationMd()
-                .toSpoiler("Install from Maven Central with Maven") + "\n\n" +
-            project.toLibVer().toGithubInstallationMd(githubUrl)
-                .toSpoiler("Install latest from GitHub with Gradle/Kotlin") + "\n\n"
-
-    readmeFile.writeText(
-        readmeFile.readText().replaceSectionInMd("Install", instructionsMd)
-    )
+tasks.register<vinogradle.InstallationToReadme>("hi") {
+    githubUrl = "https://github.com/rtmigo/precise_kt"
+    mavenCentral = true
 }
 
-
-
 tasks.register("genInstallation") {
+    dependsOn("hi")
+
     doFirst {
-        updateReadmeWithInstallationInstructions(
-            project.projectDir.resolve("README.md"),
-            githubUrl = "https://github.com/rtmigo/precise_kt"
-        )
+        //
+        //vinogradle.Readme_gradle.Readme.hello()
+        //print(vinogradle.Readme.hello2())
+        //println(Rea.fuckingField)
+        //println(fuckingFunc())
+        //Stub.hello()
+//        updateReadmeWithInstallationInstructions(
+//            project.projectDir.resolve("README.md"),
+//            githubUrl = "https://github.com/rtmigo/precise_kt"
+//        )
     }
 //        val pkgGroup = project.group.toString()
 //        val pkgLib = project.name
