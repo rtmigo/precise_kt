@@ -24,116 +24,160 @@ java {
     withSourcesJar()  // для Maven Central
 }
 
-val sonatypeUsername by lazy { System.getenv("SONATYPE_USERNAME")!! } // можно токен
-val sonatypePassword by lazy { System.getenv("SONATYPE_PASSWORD")!! } // можно токен
+//val sonatypeUsername by lazy { System.getenv("SONATYPE_USERNAME")!! } // можно токен
+//val sonatypePassword by lazy { System.getenv("SONATYPE_PASSWORD")!! } // можно токен
 
+/**
+ * В этом объекте объединены реквизиты Sonatype и GPG.
+ *
+ * Потому что подписывать пакеты GPG мы будем только при публикации в Sonatype,
+ * но не GitHub Packages.
+ **/
+data class SonatypeCredentials(
+    /** Имя пользователя Sonatype, либо токен username */
+    val username: String = System.getenv("SONATYPE_USERNAME")!!,
+    /** Пароль Sonatype, либо токен password */
+    val password: String = System.getenv("SONATYPE_PASSWORD")!!,
+    /** ASCII armored key */
+    val gpgPrivateKey: String = System.getenv("MAVEN_GPG_KEY")!!,
+    /** Пароль для дешифровки из [gpgPrivateKey] */
+    val gpgPassword: String = System.getenv("MAVEN_GPG_PASSWORD")!!,
+)
 
-publishing {
-    val ownerSlashRepo = "rtmigo/precise_kt"
+//data class GithubConfig(
+//    val username: String = System.getenv("GITHUB_USERNAME"),
+//    val password: String  = System.getenv("GITHUB_PKGPUB_TOKEN")
+//)
 
-    val dokkaHtml by tasks.getting(org.jetbrains.dokka.gradle.DokkaTask::class)
-    val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
-        dependsOn(dokkaHtml)
-        archiveClassifier.set("javadoc")
-        from(dokkaHtml.outputDirectory)
-    }
+fun configurePublishing(
+    ownerSlashRepo: String,
+    licenseKind: String,
+    projectName: String,
+    descriptionText: String,
+    sonatype: SonatypeCredentials? = null,
+    githubToken: String? = null,
+) {
+    if (sonatype == null && githubToken == null) return
 
-    val projectName = "precise" // наверно как-то можно получить из мета-данных
-    val licenseKind = "MIT License"
-    val descrText = "Kotlin/JVM compensated summation of Double sequences " +
-        "to calculate sum, mean, standard deviation "
-    val publishToGitHub = false
-    val publishToSonatype = true
+    //require(sonatype!=null || githubToken!=null)
 
-    //val sonatypeUsername by lazy {}
+    publishing {
+        //val ownerSlashRepo = "rtmigo/precise_kt"
 
-    repositories {
-        if (publishToGitHub)
-            maven {
+        val dokkaHtml by tasks.getting(org.jetbrains.dokka.gradle.DokkaTask::class)
+        val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
+            dependsOn(dokkaHtml)
+            archiveClassifier.set("javadoc")
+            from(dokkaHtml.outputDirectory)
+        }
+
+        //val projectName = "precise" // наверно как-то можно получить из мета-данных
+        //val licenseKind = "MIT License"
+        //val descrText = "Kotlin/JVM compensated summation of Double sequences " +
+        //   "to calculate sum, mean, standard deviation "
+        //val publishToGitHub = false
+        //val publishToSonatype = true
+
+        //val sonatypeUsername by lazy {}
+
+        repositories {
+            if (githubToken != null) maven {
                 name = "GitHubPackages"
                 url = uri("https://maven.pkg.github.com/$ownerSlashRepo")
 
                 credentials {
-                    username =
-                        project.findProperty("gpr.user") as String?
-                            ?: System.getenv("GITHUB_USERNAME")
-                                ?: ownerSlashRepo.substringBefore("/")
-                    password = project.findProperty("gpr.key") as String?
-                        ?: System.getenv("GITHUB_PACKAGE_PUBLISHING_TOKEN")
+                    username = ownerSlashRepo.substringBefore("/")
+//                            project.findProperty("gpr.user") as String?
+//                                ?: System.getenv("GITHUB_USERNAME")
+//                                    ?: ownerSlashRepo.substringBefore("/")
+                    password = githubToken
+//                            project.findProperty("gpr.key") as String?
+//                          ?: System.getenv("GITHUB_PACKAGE_PUBLISHING_TOKEN")
                 }
             }
 
-        if (publishToSonatype)
-            maven {
+            if (sonatype != null) maven {
                 val releasesUrl =
                     uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
                 val snapshotsUrl =
                     uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-                url = if (version.toString().endsWith("SNAPSHOT")) snapshotsUrl else releasesUrl
+                url = (if (version.toString().endsWith("SNAPSHOT"))
+                    snapshotsUrl
+                else
+                    releasesUrl)
                 credentials {
-                    username = sonatypeUsername // можно токен
-                    password = sonatypePassword // можно токен
+                    username = sonatype.username // можно токен
+                    password = sonatype.password // можно токен
                 }
             }
-    }
+        }
 
-    publications {
+        publications {
 
-        register<MavenPublication>("maven") {
-            from(components["java"])
-            artifact(javadocJar)
+            register<MavenPublication>("maven") {
+                from(components["java"])
+                artifact(javadocJar)
 
-            pom {
-                name.set(projectName)
-                url.set("https://github.com/$ownerSlashRepo")
-                description.set(descrText)
-
-                developers {
-                    developer {
-                        id.set("rtmigo")
-                        name.set("Artsiom iG")
-                        email.set("ortemeo@gmail.com")
-                    }
-                }
-
-                licenses {
-                    license {
-                        name.set(licenseKind)
-                        url.set("https://github.com/$ownerSlashRepo/blob/staging/LICENSE")
-                    }
-                }
-
-                scm {
-                    connection.set("scm:https://github.com/$ownerSlashRepo.git")
-                    developerConnection.set("scm:git@github.com:$ownerSlashRepo.git")
+                pom {
+                    name.set(projectName)
                     url.set("https://github.com/$ownerSlashRepo")
+                    description.set(descriptionText)
+
+                    developers {
+                        developer {
+                            id.set("rtmigo")
+                            name.set("Artsiom iG")
+                            email.set("ortemeo@gmail.com")
+                        }
+                    }
+
+                    licenses {
+                        license {
+                            name.set(licenseKind)
+                            url.set("https://github.com/$ownerSlashRepo/blob/-/LICENSE")
+                        }
+                    }
+
+                    scm {
+                        connection.set("scm:https://github.com/$ownerSlashRepo.git")
+                        developerConnection.set("scm:git@github.com:$ownerSlashRepo.git")
+                        url.set("https://github.com/$ownerSlashRepo")
+                    }
                 }
             }
         }
     }
+
+    if (sonatype != null) {
+        nexusStaging {
+            // конфигурируем плагин id("io.codearte.nexus-staging").
+            // Задачу можно будет запустить так: ./gradlew closeAndReleaseRepository
+            serverUrl = "https://s01.oss.sonatype.org/service/local/"
+            username = sonatype.username
+            password = sonatype.password
+        }
+
+        signing {
+            // Using the following setup, you can pass the secret key (in ascii-armored format) and the
+            // password using the ORG_GRADLE_PROJECT_signingKey and ORG_GRADLE_PROJECT_signingPassword
+            // environment variables, respectively (https://bit.ly/3CuTCdD)
+            //val signingKey: String? by project
+            //val signingPassword: String? by project
+
+            //println("Signing with key ${signingKey}")
+            //println("Signing with pwd ${signingPassword}")
+
+            useInMemoryPgpKeys(sonatype.gpgPrivateKey, sonatype.gpgPassword)
+            sign(publishing.publications["maven"])
+        }
+    }
 }
 
-nexusStaging {
-    // конфигурируем плагин id("io.codearte.nexus-staging").
-    // Задачу можно будет запустить так: ./gradlew closeAndReleaseRepository
-    serverUrl = "https://s01.oss.sonatype.org/service/local/"
-    username = sonatypeUsername
-    password = sonatypePassword
-}
-
-signing {
-    // Using the following setup, you can pass the secret key (in ascii-armored format) and the
-    // password using the ORG_GRADLE_PROJECT_signingKey and ORG_GRADLE_PROJECT_signingPassword
-    // environment variables, respectively (https://bit.ly/3CuTCdD)
-    val signingKey: String? by project
-    val signingPassword: String? by project
-
-    //println("Signing with key ${signingKey}")
-    //println("Signing with pwd ${signingPassword}")
-
-    useInMemoryPgpKeys(signingKey, signingPassword)
-    sign(publishing.publications["maven"])
-}
+configurePublishing(
+    ownerSlashRepo = "rtmigo/precise_kt",
+    projectName = "precise",
+    licenseKind = "MIT License",
+    descriptionText = "Kotlin/JVM compensated summation of Double sequences " + "to calculate sum, mean, standard deviation ")
 
 
 
@@ -176,8 +220,7 @@ tasks.register("updateReadmeVersion") {
         val regex = """(?<=${Regex.escape(prefixToFind)})[0-9\.+]+""".toRegex()
         val oldText = readmeFile.readText()
         val newText = regex.replace(oldText, project.version.toString())
-        if (newText != oldText)
-            readmeFile.writeText(newText)
+        if (newText != oldText) readmeFile.writeText(newText)
     }
 }
 
@@ -193,8 +236,7 @@ tasks.register<Jar>("uberJar") {
 
     dependsOn(configurations.runtimeClasspath)
     from({
-             configurations.runtimeClasspath.get()
-                 .filter { it.name.endsWith("jar") }
+             configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }
                  .map { zipTree(it) }
          })
 }
