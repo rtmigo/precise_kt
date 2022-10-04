@@ -230,8 +230,10 @@ fun Project.toLibVer() =
             .groupValues.single()
     )
 
-fun LibVer.toGithubInstallationMd(repoUrl: String,
-                                  branch: String = "staging") =
+fun LibVer.toGithubInstallationMd(
+    repoUrl: String,
+    branch: String = "staging",
+) =
     """
         ## Install latest from GitHub with Gradle (Kotlin)
         
@@ -309,51 +311,76 @@ fun LibVer.toMavenInstallationMd() =
     """.trimIndent()
 
 
+/** Replaces text between "# Title" and "# Next Title". */
 fun String.replaceSectionInMd(
     sectionTitle: String,
-    newSectionText: String) =// "#".toRegex().replace(this, newSectionText)
-    "([\n\r]#\\s+$sectionTitle\\s*[\n\r]).*?([\n\r]#\\s)".toRegex(RegexOption.DOT_MATCHES_ALL)
-        .replace(this) { it.groups[1]!!.value+newSectionText+ it.groups[2]!!.value}
+    newSectionText: String,
+) =
+    "([\n\r]#\\s+$sectionTitle\\s*[\n\r]).*?([\n\r]#\\s)"
+        .toRegex(RegexOption.DOT_MATCHES_ALL)
+        .replace(this) {
+            it.groups[1]!!.value + newSectionText + it.groups[2]!!.value
+        }
+
+fun updateReadmeWithInstallationInstructions(readmeFile: File, githubUrl: String) {
+    val instructionsMd =
+        project.toLibVer().toGradleInstallationMd()
+            .toSpoiler("Install with Gradle from Maven Central") + "\n\n" +
+            project.toLibVer().toMavenInstallationMd()
+                .toSpoiler("Install with Maven from Maven Central") + "\n\n" +
+            project.toLibVer().toGithubInstallationMd(githubUrl)
+                .toSpoiler("Install with Gradle from GitHub") + "\n\n"
+
+    readmeFile.writeText(
+        readmeFile.readText().replaceSectionInMd("Install", instructionsMd)
+    )
+}
 
 
 
 tasks.register("genInstallation") {
     doFirst {
+        updateReadmeWithInstallationInstructions(
+            project.projectDir.resolve("README.md"),
+            githubUrl = "https://github.com/rtmigo/precise_kt"
+        )
+    }
 //        val pkgGroup = project.group.toString()
 //        val pkgLib = project.name
 //        val pkgVer = """[0-9\.]+""".toRegex()
 //            .find(project.version.toString())!!
 //            .groupValues.single()
 
-
-
-        val code =
-
-                project.toLibVer().toGradleInstallationMd().toSpoiler("with Gradle from Maven Central")+"\n\n"+
-                project.toLibVer().toMavenInstallationMd().toSpoiler("with Maven from Maven Central")+"\n\n"+
-                project.toLibVer().toGithubInstallationMd("https://github.com/rtmigo/precise_kt").toSpoiler("with Gradle from GitHub")+"\n\n"
-
-        val readme = project.projectDir.resolve("README.md")
-        val readmeNew = project.projectDir.resolve("README.new.md")
-        readmeNew.writeText(
-        readme.readText().replaceSectionInMd("Install", code)
-        )
-
-
-//        project.projectDir.resolve("doc").mkdirs()
-//        project.projectDir.resolve("doc/install.md").writeText(
-//            code
+//
+//        val code =
+//            project.toLibVer().toGradleInstallationMd()
+//                .toSpoiler("with Gradle from Maven Central") + "\n\n" +
+//                project.toLibVer().toMavenInstallationMd()
+//                    .toSpoiler("with Maven from Maven Central") + "\n\n" +
+//                project.toLibVer().toGithubInstallationMd("https://github.com/rtmigo/precise_kt")
+//                    .toSpoiler("with Gradle from GitHub") + "\n\n"
+//
+//        val readme = project.projectDir.resolve("README.md")
+//        val readmeNew = project.projectDir.resolve("README.new.md")
+//        readmeNew.writeText(
+//            readme.readText().replaceSectionInMd("Install", code)
 //        )
-        //project
-//        // найдем что-то вроде "io.github.rtmigo:dec:0.0.1"
-//        // и поменяем на актуальную версию
-//        val readmeFile = project.rootDir.resolve("README.md")
-//        val prefixToFind = "io.github.rtmigo:precise:"
-//        val regex = """(?<=${Regex.escape(prefixToFind)})[0-9\.+]+""".toRegex()
-//        val oldText = readmeFile.readText()
-//        val newText = regex.replace(oldText, project.version.toString())
-//        if (newText != oldText) readmeFile.writeText(newText)
-    }
+//
+//
+////        project.projectDir.resolve("doc").mkdirs()
+////        project.projectDir.resolve("doc/install.md").writeText(
+////            code
+////        )
+//        //project
+////        // найдем что-то вроде "io.github.rtmigo:dec:0.0.1"
+////        // и поменяем на актуальную версию
+////        val readmeFile = project.rootDir.resolve("README.md")
+////        val prefixToFind = "io.github.rtmigo:precise:"
+////        val regex = """(?<=${Regex.escape(prefixToFind)})[0-9\.+]+""".toRegex()
+////        val oldText = readmeFile.readText()
+////        val newText = regex.replace(oldText, project.version.toString())
+////        if (newText != oldText) readmeFile.writeText(newText)
+//    }
 }
 
 tasks.build {
