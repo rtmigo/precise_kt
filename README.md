@@ -1,5 +1,5 @@
 ![Generic badge](https://img.shields.io/badge/JVM-8-blue.svg)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.rtmigo/precise.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.rtmigo/precise)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.rtmigo/precise.svg)](https://search.maven.org/artifact/io.github.rtmigo/precise)
 
 # [precise](https://github.com/rtmigo/precise_kt#readme)
 
