@@ -1,12 +1,13 @@
-package vinogradle
+package vinogradle.readme
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.*
+import vinogradle.*
 
 /**
  * Finds "README.md" file in the project root and automatically adds installation instructions.
  **/
-abstract class InstallationToReadme : DefaultTask() {
+abstract class Installation : DefaultTask() {
     @Input
     @Optional
     var githubUrl: String? = null
