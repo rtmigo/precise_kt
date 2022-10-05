@@ -18,26 +18,48 @@ data class MavenMeta(
     val description: String,
 )
 
+fun getenvOrThrow(key: String): String {
+    val result = System.getenv(key)
+    if (result == null || result.isBlank())
+        throw Error("Env does not have non-blank '$key' defined.")
+    return result
+}
+
 sealed class MavenCredentials
 
-data class GithubCredentials(var token: String) : MavenCredentials()
+data class GithubCredentials(
+    var token: String,
+) : MavenCredentials() {
+    companion object {
+        fun fromEnv() = GithubCredentials(getenvOrThrow("GITHUB_PKGPUB_TOKEN"))
+    }
+}
+
+object LocalCredentials : MavenCredentials()
 
 /**
- * В этом объекте объединены реквизиты Sonatype и GPG.
- *
- * Потому что подписывать пакеты GPG мы будем только при публикации в Sonatype,
- * но не GitHub Packages.
+ * В этом объекте объединены реквизиты Sonatype и GPG, поскольку использую я их только вместе.
+ * Sonatype требует подписей GPG для публикаций в Maven Central. Другие публикации в Maven подписей
+ * не требуют.
  **/
 data class SonatypeCredentials(
     /** Имя пользователя Sonatype, либо токен username */
-    val username: String = System.getenv("SONATYPE_USERNAME")!!,
+    val username: String,
     /** Пароль Sonatype, либо токен password */
-    val password: String = System.getenv("SONATYPE_PASSWORD")!!,
+    val password: String,
     /** ASCII armored key */
-    val gpgPrivateKey: String = System.getenv("MAVEN_GPG_KEY")!!,
+    val gpgPrivateKey: String,
     /** Пароль для дешифровки из [gpgPrivateKey] */
-    val gpgPassword: String = System.getenv("MAVEN_GPG_PASSWORD")!!,
-) : MavenCredentials()
+    val gpgPassword: String,
+) : MavenCredentials() {
+    companion object {
+        fun fromEnv() = SonatypeCredentials(
+            username = getenvOrThrow("SONATYPE_USERNAME"),
+            password = getenvOrThrow("SONATYPE_PASSWORD"),
+            gpgPrivateKey = getenvOrThrow("MAVEN_GPG_KEY"),
+            gpgPassword = getenvOrThrow("MAVEN_GPG_PASSWORD"))
+    }
+}
 
 /**
  * 2022-10 Я выяснил, что конфигурирование блоком `publishing { }` действует на таски `publish` и
@@ -46,7 +68,7 @@ data class SonatypeCredentials(
  * (`doFirst` или `MyTask: Task`) - то конфигурация запоминается внутри `Project`, но `publish` и
  * `publishToMavenLocal` ничего не публикуют.
  *
- * То есть, не получится создать таски:
+ * То есть, (пока) не получится создать таски:
  * ```
  *   ./gradlew publishToGithub
  *   ./gradlew configForGithub publish
@@ -77,7 +99,7 @@ data class SonatypeCredentials(
  *   GITHUB_CREDENTIALS=abcd ./gradlew publish
  * ```
  **/
-object Configure111 {
+object Publishing {
 
     private var configured = false
 
@@ -107,19 +129,26 @@ object Configure111 {
             from(dokkaHtml.outputDirectory)
         }
 
-    fun configurePublishing(
+    /**
+     * В зависимости от типа экземпляра [credentials] конфигурируем `publish` для публикаций
+     * на Maven Central, GitHub Packages или локально.
+     **/
+    fun configure(
         project: Project,
         meta: MavenMeta,
-        credentials: MavenCredentials?,
+        credentials: MavenCredentials,
     ) {
-        if (this.configured)
-            throw Error("You can only run this method once.")
+        println("${(::configure)::name.get()} called for $meta and ${credentials::class}")
+
+        if (this.configured) {
+            println("WARNING: ${(::configure)::name.get()} running again")
+        }
         this.configured = true
 
         project.publishingBlock {
             repositories {
                 when (credentials) {
-                    null -> {
+                    is LocalCredentials -> {
                         // pass
                     }
                     is GithubCredentials ->

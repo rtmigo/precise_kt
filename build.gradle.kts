@@ -317,7 +317,7 @@ tasks.register<vinogradle.maven.PublishLocal>("loca") {
     }
 }
 
-vinogradle.maven.Configure111.configurePublishing(
+vinogradle.maven.Publishing.configure(
     project,
     MavenMeta(
     ownerSlashRepo = "rtmigo/precise_kt",
@@ -325,6 +325,7 @@ vinogradle.maven.Configure111.configurePublishing(
     license = "MIT License",
     description = "Kotlin/JVM compensated summation of Double sequences " +
         "to calculate sum, mean, standard deviation "),
+    credentials = vinogradle.maven.LocalCredentials
     //githubToken = System.getenv("GITHUB_PKGPUB_TOKEN")
 )
 
