@@ -7,17 +7,17 @@ import vinogradle.maven.MavenMeta
 plugins {
     kotlin("jvm") //version "1.7.20"
 
-    //id("org.jetbrains.dokka") //version "1.7.10"
+    // Следующие плагины управляются из vinogradle, и их версии определяются в buildSrc.
+    // Но подключить их нужно и здесь
+    id("org.jetbrains.dokka")
+    id("signing")
     id("io.codearte.nexus-staging") // "closeAndReleaseRepository"
     id("maven-publish") // "publish"
-    //id("signing") // maven
+
 
     id("java-library")
     java
 }
-
-
-
 
 group = "io.github.rtmigo"
 version = "0.1.0-dev4"

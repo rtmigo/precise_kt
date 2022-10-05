@@ -156,7 +156,7 @@ object Publishing {
     private fun javadocJar(project: Project) =
         project.tasks.create("javaDocJar", Jar::class.java) {
             //println(project.tasks.filter { it is DokkaTask })
-            val dokkaHtml = project.tasks.getByPath(":dokkaHtml") as DokkaTask //project.tasks.filter { it is DokkaTask }.single() as DokkaTask
+            val dokkaHtml = project.tasks.getByPath(":dokkaHtml") as DokkaTask
             this.dependsOn(dokkaHtml)
             this.archiveClassifier.set("javadoc")
             this.from(dokkaHtml.outputDirectory)
@@ -178,7 +178,7 @@ object Publishing {
         }
         this.configured = true
 
-        val jdoc = javadocJar(project)
+        //val jdoc =
 
         project.publishingBlock {
             repositories {
@@ -213,7 +213,7 @@ object Publishing {
 
                 register<MavenPublication>("maven", MavenPublication::class.java) {
                     from(project.components.getByName("java"))
-                    artifact(jdoc)
+                    artifact(javadocJar(project))
 
                     pom {
                         name.set(meta.projectName)

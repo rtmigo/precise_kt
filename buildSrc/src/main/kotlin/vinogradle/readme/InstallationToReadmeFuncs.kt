@@ -1,11 +1,7 @@
-//package convention.readme
-package vinogradle
+package vinogradle.readme
 
 import org.gradle.api.*
 
-
-
-//import org.gradle.api.Project
 
 data class LibVer(val group: String, val artifact: String, val version: String)
 
@@ -43,13 +39,6 @@ fun LibVer.toGithubInstallationMd(
         }
         ```
     """.trimIndent()
-
-//         <details>
-//          <summary>Latest (Kotlin Gradle)</summary>
-//        </details>
-//
-//
-//
 
 fun String.toSpoiler(summary: String) =
     "<details><summary>$summary</summary>\n\n$this\n\n</details>"
@@ -117,50 +106,3 @@ public fun String.replaceSectionInMd(
 
     return result
 }
-
-//fun updateReadmeWithInstallationInstructions(readmeFile: File, githubUrl: String) {
-//    val instructionsMd =
-//        project.toLibVer().toGradleInstallationMd()
-//            .toSpoiler("Install from Maven Central with Gradle") + "\n\n" +
-//            project.toLibVer().toMavenInstallationMd()
-//                .toSpoiler("Install from Maven Central with Maven") + "\n\n" +
-//            project.toLibVer().toGithubInstallationMd(githubUrl)
-//                .toSpoiler("Install latest from GitHub with Gradle/Kotlin") + "\n\n"
-//
-//    readmeFile.writeText(
-//        readmeFile.readText().replaceSectionInMd("Install", instructionsMd)
-//    )
-//}
-
-
-
-
-
-
-// Create a task using the task type
-//tasks.register<GreetingTask>("hello")
-
-
-
-
-
-//import org.gradle.api.Plugin
-//    import org.gradle.api.Project
-//    import org.gradle.kotlin.dsl.create
-
-//open class HelloExtension(
-//    var greeting: String = "Hello",
-//    var name: String = "buddy"
-//)
-//
-//class HelloPlugin : Plugin<Project> {
-//    override fun apply(project: Project): Unit = project.run {
-//        val hello = project.extensions.create<HelloExtension>("HelloExtension")
-//        project.extensions.add("hello", hello)
-//        tasks.register("hello") {
-//            doLast {
-//                println("${hello.greeting.capitalize()}, ${hello.name.capitalize()}!")
-//            }
-//        }
-//    }
-//}
