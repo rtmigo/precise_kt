@@ -29,7 +29,7 @@ abstract class Installation : DefaultTask() {
                 ""
         }
 
-    private fun githubMd() =                 githubUrl.let {
+    private fun githubMd() = githubUrl.let {
         if (it != null)
             project.toLibVer().toGithubInstallationMd(it)
                 .toSpoiler("Install latest from GitHub with Gradle/Kotlin") + "\n\n"
@@ -43,7 +43,10 @@ abstract class Installation : DefaultTask() {
     fun update() {
         val instructionsMd = mavenCentralMd() + githubMd()
         project.rootDir.resolve("README.md").apply {
-            writeText(readText().replaceSectionInMd(sectionTitle, instructionsMd))
+            val oldText = readText()
+            val newText = oldText.replaceSectionInMd(sectionTitle, instructionsMd)
+            if (newText != oldText)
+                writeText(newText)
         }
     }
 }

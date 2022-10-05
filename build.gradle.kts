@@ -7,17 +7,13 @@ import vinogradle.maven.MavenMeta
 plugins {
     kotlin("jvm") //version "1.7.20"
 
-    id("org.jetbrains.dokka") //version "1.7.10"
-    id("io.codearte.nexus-staging") //version "0.30.0"
-    id("maven-publish") // maven
-    id("signing") // maven
+    //id("org.jetbrains.dokka") //version "1.7.10"
+    id("io.codearte.nexus-staging") // "closeAndReleaseRepository"
+    id("maven-publish") // "publish"
+    //id("signing") // maven
 
     id("java-library")
     java
-    //`wtf-convention`
-//    hello
-
-    //id("convention.readme")
 }
 
 
@@ -61,21 +57,10 @@ tasks.test {
     useJUnitPlatform()
 }
 
-
-tasks.register("updateReadmeVersion") {
-    doFirst {
-        // найдем что-то вроде "io.github.rtmigo:dec:0.0.1"
-        // и поменяем на актуальную версию
-        val readmeFile = project.rootDir.resolve("README.md")
-        val prefixToFind = "io.github.rtmigo:precise:"
-        val regex = """(?<=${Regex.escape(prefixToFind)})[0-9\.+]+""".toRegex()
-        val oldText = readmeFile.readText()
-        val newText = regex.replace(oldText, project.version.toString())
-        if (newText != oldText) readmeFile.writeText(newText)
-    }
+val updateReadme = tasks.register<vinogradle.readme.Installation>("updateReadme") {
+    this.githubUrl = "https://github.com/rtmigo/precise_kt"
+    this.mavenCentral = true
 }
-
-
 
 vinogradle.maven.Publishing.configure(
     project,
@@ -88,17 +73,8 @@ vinogradle.maven.Publishing.configure(
     credentials = vinogradle.maven.MavenCredentials.fromEnv()
 )
 
-
-
-tasks.register("genInstallation") {
-    dependsOn("hi")
-
-    doFirst {
-
-}
-
 tasks.build {
-    dependsOn("updateReadmeVersion")
+    dependsOn(updateReadme)
 }
 
 tasks.register<Jar>("uberJar") {

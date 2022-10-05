@@ -132,13 +132,6 @@ public fun String.replaceSectionInMd(
 //    )
 //}
 
-public object Readme {
-    fun hello() {
-        println("hello")
-    }
-}
-
-fun hello2() = "hi!"
 
 
 

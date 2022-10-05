@@ -45,7 +45,7 @@ repositories {
 }                
 
 dependencies {
-    implementation("io.github.rtmigo:precise:0.1.0-dev1-dev1")
+    implementation("io.github.rtmigo:precise:0.1.0")
 }    
 ```
 
@@ -59,7 +59,7 @@ repositories {
 }                
 
 dependencies {
-    implementation "io.github.rtmigo:precise:0.1.0-dev1-dev1"
+    implementation "io.github.rtmigo:precise:0.1.0"
 }
 ```
 
@@ -74,7 +74,7 @@ dependencies {
     <dependency>
         <groupId>io.github.rtmigo</groupId>
         <artifactId>precise</artifactId>
-        <version>0.0.0</version>
+        <version>0.1.0</version>
     </dependency>
 </dependencies>
 ```
