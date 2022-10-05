@@ -1,3 +1,5 @@
+import vinogradle.maven.MavenMeta
+
 //import vinogradle.publish.PublishToGithub
 
 //import io.github.rtmigo.vinogradle.readme.*
@@ -6,7 +8,7 @@ plugins {
     kotlin("jvm") version "1.7.20"
 
     id("org.jetbrains.dokka") //version "1.7.10"
-    id("io.codearte.nexus-staging")// version "0.30.0"
+    id("io.codearte.nexus-staging") //version "0.30.0"
     id("maven-publish") // maven
     id("signing") // maven
 
@@ -22,7 +24,7 @@ plugins {
 
 
 group = "io.github.rtmigo"
-version = "0.0.0+9"
+version = "0.1.0-dev3"
 
 tasks.register("pkgver") {
     doLast {
@@ -61,6 +63,63 @@ data class SonatypeCredentials(
 
 //project.configurePublishing {
 //
+//}
+
+//publishing {
+//    //val ownerSlashRepo = "rtmigo/precise_kt"
+//
+////    val dokkaHtml by tasks.getting(org.jetbrains.dokka.gradle.DokkaTask::class)
+////    val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
+////        dependsOn(dokkaHtml)
+////        archiveClassifier.set("javadoc")
+////        from(dokkaHtml.outputDirectory)
+////    }
+//
+//    //val projectName = "precise" // наверно как-то можно получить из мета-данных
+//    //val licenseKind = "MIT License"
+//    //val descrText = "Kotlin/JVM compensated summation of Double sequences " +
+//    //   "to calculate sum, mean, standard deviation "
+//    //val publishToGitHub = false
+//    //val publishToSonatype = true
+//
+//    //val sonatypeUsername by lazy {}
+//
+//
+//
+//    publications {
+//
+//        register<MavenPublication>("maven") {
+//            from(components["java"])
+//            //artifact(javadocJar)
+//
+//            pom {
+////                name.set(projectName)
+////                url.set("https://github.com/$ownerSlashRepo")
+////                description.set(descriptionText)
+//
+//                developers {
+//                    developer {
+//                        id.set("rtmigo")
+//                        name.set("Artsiom iG")
+//                        email.set("ortemeo@gmail.com")
+//                    }
+//                }
+//
+////                licenses {
+////                    license {
+////                        name.set(licenseKind)
+////                        url.set("https://github.com/$ownerSlashRepo/blob/-/LICENSE")
+////                    }
+////                }
+//
+////                scm {
+////                    connection.set("scm:https://github.com/$ownerSlashRepo.git")
+////                    developerConnection.set("scm:git@github.com:$ownerSlashRepo.git")
+////                    url.set("https://github.com/$ownerSlashRepo")
+////                }
+//            }
+//        }
+//    }
 //}
 
 
@@ -188,12 +247,11 @@ fun configurePublishing(
     }
 }
 
-configurePublishing(
-    ownerSlashRepo = "rtmigo/precise_kt",
-    projectName = "precise",
-    licenseKind = "MIT License",
-    descriptionText = "Kotlin/JVM compensated summation of Double sequences " + "to calculate sum, mean, standard deviation ")
-
+//configurePublishing(
+//    ownerSlashRepo = "rtmigo/precise_kt",
+//    projectName = "precise",
+//    licenseKind = "MIT License",
+//    descriptionText = "Kotlin/JVM compensated summation of Double sequences " + "to calculate sum, mean, standard deviation ")
 
 
 repositories {
@@ -240,28 +298,130 @@ tasks.register("updateReadmeVersion") {
 //}
 
 
-tasks.register<vinogradle.readme.Installation>("hi") {
-    githubUrl = "https://github.com/rtmigo/precise_kt"
-    mavenCentral = true
-}
+//tasks.register<vinogradle.readme.Installation>("hi") {
+//    githubUrl = "https://github.com/rtmigo/precise_kt"
+//    mavenCentral = true
+//}
 
 //tasks.register<vinogradle.maven.PublishToGithub777>("togh") {
 ////    githubUrl = "https://github.com/rtmigo/precise_kt"
 ////    mavenCentral = true
 //}
 
-tasks.register<vinogradle.maven.PublishToGithub>("togh1") {
-    settings = vinogradle.maven.MavenPublishSettings(
-        ownerSlashRepo = "rtmigo/precise_kt",
-        projectName = "precise",
-        licenseKind = "MIT License",
-        descriptionText = "Kotlin/JVM compensated summation of Double sequences " +
-            "to calculate sum, mean, standard deviation ")
-
-
-//    githubUrl = "https://github.com/rtmigo/precise_kt"
-//    mavenCentral = true
+tasks.register<vinogradle.maven.PublishLocal>("loca") {
+    //finalizedBy(":publishToMavenLocal")
+    //dependsOn(":publishToMavenLocal")
+    //shouldRunAfter(":publishToMavenLocal")
+    doLast {
+        println(publishing.publications.size)
+    }
 }
+
+vinogradle.maven.Configure111.configurePublishing(
+    project,
+    MavenMeta(
+    ownerSlashRepo = "rtmigo/precise_kt",
+    projectName = "precise",
+    license = "MIT License",
+    description = "Kotlin/JVM compensated summation of Double sequences " +
+        "to calculate sum, mean, standard deviation "),
+    //githubToken = System.getenv("GITHUB_PKGPUB_TOKEN")
+)
+
+
+//githubToken = System.getenv("GITHUB_PKGPUB_TOKEN")
+//)
+
+tasks.register("loca1") {
+    doFirst {
+        //vinogradle.maven.PublishLocal.configure123(project)
+    }
+}
+//publishing {
+//    //val ownerSlashRepo = "rtmigo/precise_kt"
+//
+////    val dokkaHtml by tasks.getting(org.jetbrains.dokka.gradle.DokkaTask::class)
+////    val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
+////        dependsOn(dokkaHtml)
+////        archiveClassifier.set("javadoc")
+////        from(dokkaHtml.outputDirectory)
+////    }
+//
+//    //val projectName = "precise" // наверно как-то можно получить из мета-данных
+//    //val licenseKind = "MIT License"
+//    //val descrText = "Kotlin/JVM compensated summation of Double sequences " +
+//    //   "to calculate sum, mean, standard deviation "
+//    //val publishToGitHub = false
+//    //val publishToSonatype = true
+//
+//    //val sonatypeUsername by lazy {}
+//
+//
+//
+//    publications {
+//
+//        register<MavenPublication>("maven") {
+//            from(components["java"])
+//            //artifact(javadocJar)
+//
+//            pom {
+////                name.set(projectName)
+////                url.set("https://github.com/$ownerSlashRepo")
+////                description.set(descriptionText)
+//
+//                developers {
+//                    developer {
+//                        id.set("rtmigo")
+//                        name.set("Artsiom iG")
+//                        email.set("ortemeo@gmail.com")
+//                    }
+//                }
+//
+////                licenses {
+////                    license {
+////                        name.set(licenseKind)
+////                        url.set("https://github.com/$ownerSlashRepo/blob/-/LICENSE")
+////                    }
+////                }
+//
+////                scm {
+////                    connection.set("scm:https://github.com/$ownerSlashRepo.git")
+////                    developerConnection.set("scm:git@github.com:$ownerSlashRepo.git")
+////                    url.set("https://github.com/$ownerSlashRepo")
+////                }
+//            }
+//        }
+//    }
+//}
+//
+//    }
+//    //dependsOn("loca")
+//    doLast {
+//        println(publishing.publications.size)
+//    }
+//    //dependsOn("publishToMavenLocal")
+//    //finalizedBy(":publishToMavenLocal")
+//    //dependsOn(":publishToMavenLocal")
+//    //shouldRunAfter(":publishToMavenLocal")
+//}
+
+//tasks.register<vinogradle.maven.PublishToGithub>("vpg") {
+//
+//    settings = vinogradle.maven.MavenPublishSettings(
+//        ownerSlashRepo = "rtmigo/precise_kt",
+//        projectName = "precise",
+//        licenseKind = "MIT License",
+//        descriptionText = "Kotlin/JVM compensated summation of Double sequences " +
+//            "to calculate sum, mean, standard deviation ")
+//
+//    githubToken = System.getenv("GITHUB_PKGPUB_TOKEN")
+//
+//
+////    githubUrl = "https://github.com/rtmigo/precise_kt"
+////    mavenCentral = true
+//
+//
+//}
 
 tasks.register("genInstallation") {
     dependsOn("hi")

@@ -45,7 +45,7 @@ repositories {
 }                
 
 dependencies {
-    implementation("io.github.rtmigo:precise:0.0.0")
+    implementation("io.github.rtmigo:precise:0.1.0-dev1-dev1")
 }    
 ```
 
@@ -59,7 +59,7 @@ repositories {
 }                
 
 dependencies {
-    implementation "io.github.rtmigo:precise:0.0.0"
+    implementation "io.github.rtmigo:precise:0.1.0-dev1-dev1"
 }
 ```
 
