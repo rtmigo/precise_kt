@@ -1,41 +1,29 @@
-//import vinogradle.publish.PublishToGithub
+package vinogradle.maven
 
-//import io.github.rtmigo.vinogradle.readme.*
+import gradle.kotlin.dsl.accessors._b9059f7bec7e371784bdc5dcde370402.*
+import gradle.kotlin.dsl.accessors._b9059f7bec7e371784bdc5dcde370402.publishing
+import org.gradle.kotlin.dsl.*
 
+//
+//import org.gradle.api.publish.maven.MavenPublication
+//import org.gradle.api.tasks.bundling.Jar
+//import org.gradle.kotlin.dsl.*
+//import java.util.*
+//
+repositories {
+    //mavenCentral()
+    gradlePluginPortal()
+}
+//
 plugins {
-    kotlin("jvm") version "1.7.20"
-
-    id("org.jetbrains.dokka") //version "1.7.10"
-    id("io.codearte.nexus-staging")// version "0.30.0"
-    id("maven-publish") // maven
-    id("signing") // maven
-
-    id("java-library")
-    java
-    //`wtf-convention`
-//    hello
-
-    //id("convention.readme")
+    `maven-publish`
+    id("org.jetbrains.dokka")  // https://plugins.gradle.org/plugin/org.jetbrains.dokka
+    id("io.codearte.nexus-staging")
+    signing
 }
 
+//val dokkaHtml by tasks.getting(org.jetbrains.dokka.gradle.DokkaTask::class)
 
-
-
-group = "io.github.rtmigo"
-version = "0.0.0+9"
-
-tasks.register("pkgver") {
-    doLast {
-        println(project.version.toString())
-    }
-}
-
-java {
-    withSourcesJar()  // для Maven Central
-}
-
-//val sonatypeUsername by lazy { System.getenv("SONATYPE_USERNAME")!! } // можно токен
-//val sonatypePassword by lazy { System.getenv("SONATYPE_PASSWORD")!! } // можно токен
 
 /**
  * В этом объекте объединены реквизиты Sonatype и GPG.
@@ -59,11 +47,6 @@ data class SonatypeCredentials(
 //    val password: String  = System.getenv("GITHUB_PKGPUB_TOKEN")
 //)
 
-//project.configurePublishing {
-//
-//}
-
-
 fun configurePublishing(
     ownerSlashRepo: String,
     licenseKind: String,
@@ -72,6 +55,8 @@ fun configurePublishing(
     sonatype: SonatypeCredentials? = null,
     githubToken: String? = null,
 ) {
+    // TODO поделить этот монолит на части
+
     if (sonatype == null && githubToken == null) return
 
     //require(sonatype!=null || githubToken!=null)
@@ -188,151 +173,8 @@ fun configurePublishing(
     }
 }
 
-configurePublishing(
-    ownerSlashRepo = "rtmigo/precise_kt",
-    projectName = "precise",
-    licenseKind = "MIT License",
-    descriptionText = "Kotlin/JVM compensated summation of Double sequences " + "to calculate sum, mean, standard deviation ")
+//tasks.register<Jar>("publish") {
 
-
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-
-    testImplementation(kotlin("test"))
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
-    testImplementation("io.kotest:kotest-assertions-core:5.4.2")
-}
-
-kotlin {
-    sourceSets {
-        val main by getting
-        val test by getting
-    }
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-
-
-tasks.register("updateReadmeVersion") {
-    doFirst {
-        // найдем что-то вроде "io.github.rtmigo:dec:0.0.1"
-        // и поменяем на актуальную версию
-        val readmeFile = project.rootDir.resolve("README.md")
-        val prefixToFind = "io.github.rtmigo:precise:"
-        val regex = """(?<=${Regex.escape(prefixToFind)})[0-9\.+]+""".toRegex()
-        val oldText = readmeFile.readText()
-        val newText = regex.replace(oldText, project.version.toString())
-        if (newText != oldText) readmeFile.writeText(newText)
-    }
-}
-
-//hello {
-//    greeting = "Привет"
-//    name = "Бадя-бадя"
 //}
 
 
-tasks.register<vinogradle.readme.Installation>("hi") {
-    githubUrl = "https://github.com/rtmigo/precise_kt"
-    mavenCentral = true
-}
-
-//tasks.register<vinogradle.maven.PublishToGithub777>("togh") {
-////    githubUrl = "https://github.com/rtmigo/precise_kt"
-////    mavenCentral = true
-//}
-
-tasks.register<vinogradle.maven.PublishToGithub>("togh1") {
-    settings = vinogradle.maven.MavenPublishSettings(
-        ownerSlashRepo = "rtmigo/precise_kt",
-        projectName = "precise",
-        licenseKind = "MIT License",
-        descriptionText = "Kotlin/JVM compensated summation of Double sequences " +
-            "to calculate sum, mean, standard deviation ")
-
-
-//    githubUrl = "https://github.com/rtmigo/precise_kt"
-//    mavenCentral = true
-}
-
-tasks.register("genInstallation") {
-    dependsOn("hi")
-
-    doFirst {
-        //
-        //vinogradle.Readme_gradle.Readme.hello()
-        //print(vinogradle.Readme.hello2())
-        //println(Rea.fuckingField)
-        //println(fuckingFunc())
-        //Stub.hello()
-//        updateReadmeWithInstallationInstructions(
-//            project.projectDir.resolve("README.md"),
-//            githubUrl = "https://github.com/rtmigo/precise_kt"
-//        )
-    }
-//        val pkgGroup = project.group.toString()
-//        val pkgLib = project.name
-//        val pkgVer = """[0-9\.]+""".toRegex()
-//            .find(project.version.toString())!!
-//            .groupValues.single()
-
-//
-//        val code =
-//            project.toLibVer().toGradleInstallationMd()
-//                .toSpoiler("with Gradle from Maven Central") + "\n\n" +
-//                project.toLibVer().toMavenInstallationMd()
-//                    .toSpoiler("with Maven from Maven Central") + "\n\n" +
-//                project.toLibVer().toGithubInstallationMd("https://github.com/rtmigo/precise_kt")
-//                    .toSpoiler("with Gradle from GitHub") + "\n\n"
-//
-//        val readme = project.projectDir.resolve("README.md")
-//        val readmeNew = project.projectDir.resolve("README.new.md")
-//        readmeNew.writeText(
-//            readme.readText().replaceSectionInMd("Install", code)
-//        )
-//
-//
-////        project.projectDir.resolve("doc").mkdirs()
-////        project.projectDir.resolve("doc/install.md").writeText(
-////            code
-////        )
-//        //project
-////        // найдем что-то вроде "io.github.rtmigo:dec:0.0.1"
-////        // и поменяем на актуальную версию
-////        val readmeFile = project.rootDir.resolve("README.md")
-////        val prefixToFind = "io.github.rtmigo:precise:"
-////        val regex = """(?<=${Regex.escape(prefixToFind)})[0-9\.+]+""".toRegex()
-////        val oldText = readmeFile.readText()
-////        val newText = regex.replace(oldText, project.version.toString())
-////        if (newText != oldText) readmeFile.writeText(newText)
-//    }
-}
-
-tasks.build {
-    dependsOn("updateReadmeVersion")
-}
-
-//tasks.register<PublishToGithub222>("haha") {
-//
-//}
-
-tasks.register<Jar>("uberJar") {
-    archiveClassifier.set("uber")
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-
-    from(sourceSets.main.get().output)
-
-    dependsOn(configurations.runtimeClasspath)
-    from({
-             configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }
-                 .map { zipTree(it) }
-         })
-}
