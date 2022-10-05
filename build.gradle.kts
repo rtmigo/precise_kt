@@ -5,7 +5,7 @@ import vinogradle.maven.MavenMeta
 //import io.github.rtmigo.vinogradle.readme.*
 
 plugins {
-    kotlin("jvm") version "1.7.20"
+    kotlin("jvm") //version "1.7.20"
 
     id("org.jetbrains.dokka") //version "1.7.10"
     id("io.codearte.nexus-staging") //version "0.30.0"
@@ -24,7 +24,7 @@ plugins {
 
 
 group = "io.github.rtmigo"
-version = "0.1.0-dev3"
+version = "0.1.0-dev4"
 
 tasks.register("pkgver") {
     doLast {
@@ -325,7 +325,7 @@ vinogradle.maven.Publishing.configure(
     license = "MIT License",
     description = "Kotlin/JVM compensated summation of Double sequences " +
         "to calculate sum, mean, standard deviation "),
-    credentials = vinogradle.maven.LocalCredentials
+    credentials = vinogradle.maven.MavenCredentials.fromEnv()
     //githubToken = System.getenv("GITHUB_PKGPUB_TOKEN")
 )
 

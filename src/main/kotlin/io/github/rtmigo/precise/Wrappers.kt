@@ -3,7 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import io.github.rtmigo.precise.*
+@file:JvmName("Precise")
+@file:JvmMultifileClass
+package io.github.rtmigo.precise
 
 @ExperimentalApi
 fun Iterable<Double>.preciseSum() = this.preciseSumOf { it }  // TODO add unit-test

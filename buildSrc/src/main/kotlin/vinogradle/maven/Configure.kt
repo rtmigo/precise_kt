@@ -18,14 +18,46 @@ data class MavenMeta(
     val description: String,
 )
 
+class EnvKeyNotFoundException(key: String): Exception("Env does not have non-blank '$key' defined.")
+
 fun getenvOrThrow(key: String): String {
     val result = System.getenv(key)
     if (result == null || result.isBlank())
-        throw Error("Env does not have non-blank '$key' defined.")
+        throw EnvKeyNotFoundException(key)
     return result
 }
 
-sealed class MavenCredentials
+sealed class MavenCredentials {
+    companion object {
+        /**
+         * Генерирует экземпляр [MavenCredentials], конкретный тип которого зависит от заданных
+         * переменных среды.
+         **/
+        fun fromEnv(): MavenCredentials {
+            fun tryCreate(block: () -> MavenCredentials) =
+                try {
+                    block()
+                } catch (_: EnvKeyNotFoundException) {
+                    null
+                }
+
+            val results = listOfNotNull(
+                tryCreate { GithubCredentials.fromEnv() },
+                tryCreate { SonatypeCredentials.fromEnv() },
+            )
+
+            return when (results.size) {
+                0 -> LocalCredentials
+                1 -> results.single()
+                else ->
+                    throw Error("Env contains ${results.size} possible matching variables")
+            }.also {
+                println("Auto-detected ${MavenCredentials::class.simpleName} type: " +
+                            "${it::class.simpleName}")
+            }
+        }
+    }
+}
 
 data class GithubCredentials(
     var token: String,
@@ -122,18 +154,19 @@ object Publishing {
             .extensions.getByName("publishing") as PublishingExtension
 
     private fun javadocJar(project: Project) =
-        project.tasks.create("javaDoc", Jar::class.java) {
-            val dokkaHtml = project.tasks.find { it is DokkaTask }!! as DokkaTask
+        project.tasks.create("javaDocJar", Jar::class.java) {
+            //println(project.tasks.filter { it is DokkaTask })
+            val dokkaHtml = project.tasks.getByPath(":dokkaHtml") as DokkaTask //project.tasks.filter { it is DokkaTask }.single() as DokkaTask
             this.dependsOn(dokkaHtml)
-            archiveClassifier.set("javadoc")
-            from(dokkaHtml.outputDirectory)
+            this.archiveClassifier.set("javadoc")
+            this.from(dokkaHtml.outputDirectory)
         }
 
     /**
      * В зависимости от типа экземпляра [credentials] конфигурируем `publish` для публикаций
      * на Maven Central, GitHub Packages или локально.
      **/
-    fun configure(
+    public fun configure(
         project: Project,
         meta: MavenMeta,
         credentials: MavenCredentials,
@@ -144,6 +177,8 @@ object Publishing {
             println("WARNING: ${(::configure)::name.get()} running again")
         }
         this.configured = true
+
+        val jdoc = javadocJar(project)
 
         project.publishingBlock {
             repositories {
@@ -178,7 +213,7 @@ object Publishing {
 
                 register<MavenPublication>("maven", MavenPublication::class.java) {
                     from(project.components.getByName("java"))
-                    artifact(javadocJar(project))
+                    artifact(jdoc)
 
                     pom {
                         name.set(meta.projectName)
