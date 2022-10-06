@@ -178,9 +178,22 @@ jobs:
           ./gradlew publish
         env:
           GITHUB_PKGPUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  are-sonatype-credentials-set:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check variables
+        run:
+          if [ -z "$MAVEN_GPG_KEY" ]; then exit 1; fi
+          if [ -z "$MAVEN_GPG_KEY1" ]; then exit 1; fi
+        env:
+          MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
+          MAVEN_GPG_PASSWORD: ${{ secrets.MAVEN_GPG_PASSWORD }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
 
   to-maven-central-package:
-    needs: [ to-master ]
+    needs: [ to-master, are-sonatype-credentials-set ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
