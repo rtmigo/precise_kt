@@ -187,12 +187,13 @@ jobs:
   are-sonatype-credentials-set:
     runs-on: ubuntu-latest
     outputs:
-      ok: $0
+      result: $0
     steps:
       - uses: actions/checkout@v2
       - name: Check variables
         run:
-          if [ -z "$MAVEN_GPG_KEY1" ]; then echo "::set-output name=ok::false"; exit 0; fi
+          if [ -z "$MAVEN_GPG_KEY1" ]; then exit 0; fi
+          echo "::set-output name=result::true"
         env:
           MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
           MAVEN_GPG_PASSWORD: ${{ secrets.MAVEN_GPG_PASSWORD }}
@@ -203,7 +204,7 @@ jobs:
     needs:
       - are-sonatype-credentials-set
     runs-on: ubuntu-latest
-    if: $
+    if: needs.are-sonatype-credentials-set.outputs.result=='true'
     steps:
       - run: exit 0
 
