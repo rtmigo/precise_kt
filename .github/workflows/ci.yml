@@ -210,7 +210,7 @@ jobs:
 
   gate2:
     runs-on: ubuntu-latest
-    if: secrets.MAVEN_GPG_KEY1!=''
+    if: ${{ secrets.MAVEN_GPG_KEY }}
     steps:
       - uses: actions/checkout@v2
 
