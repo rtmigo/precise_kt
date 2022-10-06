@@ -147,7 +147,11 @@ jobs:
 #        run: ./gradlew pkgver -q
 
       - name: Get the project version
-        run: echo "PKGVER=$(./gradlew pkgver -q --console=plain)" >> $GITHUB_ENV
+        run: |
+           # warm up (skip progress indicator)
+           ./gradlew pkgver -q
+           # store version to var
+           echo "PKGVER=$(./gradlew pkgver -q --console=plain)" >> $GITHUB_ENV
 
       - name: Publish GitHub release
         id: publish_github_release
