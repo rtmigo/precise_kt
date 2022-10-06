@@ -204,13 +204,7 @@ jobs:
     needs:
       - are-sonatype-credentials-set
     runs-on: ubuntu-latest
-    if: needs.are-sonatype-credentials-set.outputs.result=='true'
-    steps:
-      - run: exit 0
-
-  gate2:
-    runs-on: ubuntu-latest
-    if: ${{ secrets.MAVEN_GPG_KEY }}
+    if: needs.are-sonatype-credentials-set.outputs1.result=='true'
     steps:
       - uses: actions/checkout@v2
 
