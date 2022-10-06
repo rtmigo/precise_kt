@@ -62,6 +62,8 @@ val updateReadme = tasks.register<vinogradle.readme.Installation>("updateReadme"
     this.mavenCentral = true
 }
 
+//logger.in
+
 vinogradle.maven.Publishing.configure(
     project,
     MavenMeta(
@@ -80,6 +82,8 @@ tasks.build {
 tasks.register<Jar>("uberJar") {
     archiveClassifier.set("uber")
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
+    //project
 
     from(sourceSets.main.get().output)
 
