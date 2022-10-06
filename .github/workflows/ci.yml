@@ -204,9 +204,9 @@ jobs:
     needs:
       - are-sonatype-credentials-set
     runs-on: ubuntu-latest
-    if: needs.are-sonatype-credentials-set.outputs.result=='true'
+    if: needs.are-sonatype-credentials-set.outputs1.result=='true'
     steps:
-      - run: exit 0
+      - uses: actions/checkout@v2
 
   to-maven-central-package:
     needs: [ to-master, gate ]
