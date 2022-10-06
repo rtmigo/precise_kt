@@ -42,7 +42,7 @@ jobs:
       - name: Run unit tests
         run: gradle test --no-daemon --info
 
-  integration-test-dev-branch:
+  test-dev-as-module-from-git:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -69,10 +69,10 @@ jobs:
       - name: Build sample project that uses the library
         run: |
           pip install git+https://github.com/rtmigo/tempp_py
-          python test_as_dependency.py dev
+          python test_as_git_module.py dev
 
   to-staging:
-    needs: [unit-test,integration-test-dev-branch]
+    needs: [unit-test, test-dev-as-module-from-git]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
