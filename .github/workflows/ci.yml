@@ -122,7 +122,7 @@ jobs:
       - name: Build sample project that uses the library
         run: |
           pip install git+https://github.com/rtmigo/tempp_py
-          python test_as_dependency.py 
+          python test_as_git_module.py 
 
   to-github-release:
     needs: [ integration-test-default-branch ]
