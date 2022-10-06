@@ -203,6 +203,8 @@ jobs:
     needs:
       - are-sonatype-credentials-set
     if: $
+    steps:
+      - run: exit 0
 
   to-maven-central-package:
     needs: [ to-master, gate ]
