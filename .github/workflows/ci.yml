@@ -208,6 +208,12 @@ jobs:
     steps:
       - run: exit 0
 
+  gate2:
+    runs-on: ubuntu-latest
+    if: secrets.MAVEN_GPG_KEY1!=''
+    steps:
+      - uses: actions/checkout@v2
+
   to-maven-central-package:
     needs: [ to-master, gate ]
     runs-on: ubuntu-latest
