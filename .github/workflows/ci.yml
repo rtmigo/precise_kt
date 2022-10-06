@@ -195,7 +195,7 @@ jobs:
           if [ -z "$MAVEN_GPG_KEY" ]; then exit 0; fi
           echo "::set-output name=result::true"
         env:
-          MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
+          MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY1 }}
           MAVEN_GPG_PASSWORD: ${{ secrets.MAVEN_GPG_PASSWORD }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
