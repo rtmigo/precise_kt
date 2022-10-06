@@ -3,6 +3,10 @@
  * SPDX-License-Identifier: MIT
  */
 
+@file:JvmName("Precise")
+@file:JvmMultifileClass
+package io.github.rtmigo.precise
+
 import io.github.rtmigo.precise.*
 
 @ExperimentalApi
