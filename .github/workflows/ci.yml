@@ -186,7 +186,7 @@ jobs:
 
   are-sonatype-credentials-set:
     runs-on: ubuntu-latest
-    if: $MAVEN_GPG_KEY
+    if: env.MAVEN_GPG_KEY
     env:
       MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
       MAVEN_GPG_PASSWORD: ${{ secrets.MAVEN_GPG_PASSWORD }}
