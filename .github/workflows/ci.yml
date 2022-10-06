@@ -186,30 +186,18 @@ jobs:
 
   are-sonatype-credentials-set:
     runs-on: ubuntu-latest
-    outputs:
-      result: $0
+    if: $MAVEN_GPG_KEY
+      env:
+        MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
+        MAVEN_GPG_PASSWORD: ${{ secrets.MAVEN_GPG_PASSWORD }}
+        SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+        SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
     steps:
       - uses: actions/checkout@v2
-      - name: Check variables
-        run: |
-          if [ -z "$MAVEN_GPG_KEY" ]; then exit 0; fi
-          echo "::set-output name=result::true"
-        env:
-          MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY1 }}
-          MAVEN_GPG_PASSWORD: ${{ secrets.MAVEN_GPG_PASSWORD }}
-          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
 
-  gate:
-    needs:
-      - are-sonatype-credentials-set
-    runs-on: ubuntu-latest
-    if: needs.are-sonatype-credentials-set.outputs1.result=='true'
-    steps:
-      - uses: actions/checkout@v2
 
   to-maven-central-package:
-    needs: [ to-master, gate ]
+    needs: [ to-master, are-sonatype-credentials-set ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
