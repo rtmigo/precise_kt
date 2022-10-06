@@ -159,7 +159,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   to-github-package:
-    needs: [ to-master ]
+    # needs: [ to-master ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
