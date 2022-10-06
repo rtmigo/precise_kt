@@ -27,6 +27,8 @@ fun getenvOrThrow(key: String): String {
     return result
 }
 
+
+
 sealed class MavenCredentials {
     companion object {
         /**
@@ -52,12 +54,15 @@ sealed class MavenCredentials {
                 else ->
                     throw Error("Env contains ${results.size} possible matching variables")
             }.also {
-                println("Auto-detected ${MavenCredentials::class.simpleName} type: " +
+                System.err.println("Auto-detected ${MavenCredentials::class.simpleName} type: " +
                             "${it::class.simpleName}")
             }
         }
     }
 }
+
+
+
 
 data class GithubCredentials(
     var token: String,
@@ -171,10 +176,10 @@ object Publishing {
         meta: MavenMeta,
         credentials: MavenCredentials,
     ) {
-        println("${(::configure)::name.get()} called for $meta and ${credentials::class}")
+        project.logger.info("${(::configure)::name.get()} called for $meta and ${credentials::class}")
 
         if (this.configured) {
-            println("WARNING: ${(::configure)::name.get()} running again")
+            project.logger.warn("${(::configure)::name.get()} running again")
         }
         this.configured = true
 
