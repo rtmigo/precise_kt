@@ -184,20 +184,9 @@ jobs:
         env:
           GITHUB_PKGPUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  are-sonatype-credentials-set:
-    runs-on: ubuntu-latest
-    if: env.MAVEN_GPG_KEY
-    env:
-      MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
-      MAVEN_GPG_PASSWORD: ${{ secrets.MAVEN_GPG_PASSWORD }}
-      SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-      SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-    steps:
-      - uses: actions/checkout@v2
-
 
   to-maven-central-package:
-    needs: [ to-master, are-sonatype-credentials-set ]
+    needs: [ to-master ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
