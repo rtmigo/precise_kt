@@ -99,7 +99,7 @@ jobs:
       - uses: actions/checkout@master
 
   to-master:
-    needs: [ to-staging, publish-flag, are-sonatype-credentials-set ]
+    needs: [ to-staging, publish-flag, assert-sonatype-credentials-set ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -191,7 +191,7 @@ jobs:
 
   ##################################################################################################
 
-  are-sonatype-credentials-set:
+  assert-sonatype-credentials-set:
     needs: [ publish-flag ]
     runs-on: ubuntu-latest
     steps:
