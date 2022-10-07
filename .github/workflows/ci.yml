@@ -138,6 +138,8 @@ jobs:
           target_branch: master
           github_token: ${{ github.token }}
 
+  ## GITHUB RELEASE AND PACKAGE ####################################################################
+
   assert-github-release-not-exists:
     # проверяем, что из Gradle можно получить номер релиза, и что такой релиз
     # ещё не публиковался
@@ -176,48 +178,12 @@ jobs:
         with:
           python-version: '3.10'
 
-#
-#      - name: Setup KScript
-#        run: |
-#          curl -s "https://get.sdkman.io" | bash
-#          source "$HOME/.sdkman/bin/sdkman-init.sh"
-#          sdk install kotlin
-#          sdk install kscript
-
-#      - name: Get the project version
-#        run: |
-#          source "$HOME/.sdkman/bin/sdkman-init.sh"
-#          echo "PKGVER=$(kscript -s .github/get_target_pkgver.kts)" >> $GITHUB_ENV
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Get the project version
         run: |
           echo "PKGVER=$(python .github/get_target_pkgver.py)" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
-
-#      - name: Get the project version
-#        run: |
-#           # warm up (skip progress indicator)
-#           ./gradlew pkgver -q
-#           # store version to var
-#           echo "PKGVER=$(./gradlew pkgver -q --console=plain)" >> $GITHUB_ENV
-
-#      - uses: fwilhe2/setup-kotlin@main
-#        with:
-#          version: 1.7.0
-#      - name: Run the script
-#        run: kotlin .github/get_target_pkgver.kts
-
-#      - name: Get the project version
-#        run: |
-#           # warm up (skip progress indicator)
-#           ./gradlew pkgver -q
-#           # store version to var
-#           echo "PKGVER=$(kotlin .github/get_target_pkgver.main.kts)" >> $GITHUB_ENV
-
       - name: Publish GitHub release
         id: publish_github_release
         uses: softprops/action-gh-release@v1
@@ -245,7 +211,7 @@ jobs:
           # this token is predefined
           GITHUB_PKGPUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  ##################################################################################################
+  ## MAVEN CENTRAL #################################################################################
 
   assert-sonatype-credentials-set:
     needs: [ publish-flag ]
