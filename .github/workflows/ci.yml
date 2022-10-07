@@ -19,10 +19,6 @@ concurrency:
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
   cancel-in-progress: true
 
-#concurrency:
-#  group: ci-tests-${{ github.ref }}-1
-#  cancel-in-progress: true
-
 jobs:
   unit-test:
     timeout-minutes: 15
@@ -51,30 +47,6 @@ jobs:
 
       - name: Run unit tests
         run: gradle test --no-daemon --info
-
-
-
-#  assert-github-release-not-exists:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: Setup KScript
-#        run: |
-#          curl -s "https://get.sdkman.io" | bash
-#          source "$HOME/.sdkman/bin/sdkman-init.sh"
-#          sdk install kotlin
-#          sdk install kscript
-#      - name: Just print
-#        run: gh release list
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#
-#      - name: Check version
-#        run: |
-#          source "$HOME/.sdkman/bin/sdkman-init.sh"
-#          kscript -s .github/get_target_pkgver.kts
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   test-dev-as-module-from-git:
     runs-on: ${{ matrix.os }}
@@ -106,7 +78,7 @@ jobs:
           python test_as_git_module.py dev
 
   to-staging:
-    needs: [unit-test, test-dev-as-module-from-git]
+    needs: [ unit-test, test-dev-as-module-from-git ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -143,7 +115,7 @@ jobs:
   assert-github-release-not-exists:
     # проверяем, что из Gradle можно получить номер релиза, и что такой релиз
     # ещё не публиковался
-    needs: [publish-flag]
+    needs: [ publish-flag ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -183,7 +155,7 @@ jobs:
           echo "PKGVER=$(python .github/get_target_pkgver.py)" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+
       - name: Publish GitHub release
         id: publish_github_release
         uses: softprops/action-gh-release@v1
