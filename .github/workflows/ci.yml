@@ -14,10 +14,14 @@ on:
       - '**.txt'
       - '.github/badges/**.svg'
 
-
+# This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
-  group: ci-tests-${{ github.ref }}-1
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
   cancel-in-progress: true
+
+#concurrency:
+#  group: ci-tests-${{ github.ref }}-1
+#  cancel-in-progress: true
 
 jobs:
   unit-test:
@@ -29,6 +33,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ] # windows-latest
+        jdk_version: [ 8, 18 ]
 
     steps:
 
@@ -37,11 +42,11 @@ jobs:
       - name: Update submodules
         run: git submodule update --init --recursive
 
-      - name: Setup JDK 8
+      - name: Setup JDK ${{ matrix.jdk_version }}
         uses: actions/setup-java@v2
         with:
-          java-version: '8'
-          distribution: 'adopt'
+          java-version: ${{ matrix.jdk_version }}
+          distribution: 'temurin'
           cache: gradle
 
       - name: Run unit tests
@@ -63,7 +68,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '8'
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: gradle
 
       - name: Set up Python 3.10
@@ -95,7 +100,7 @@ jobs:
       - uses: actions/checkout@master
 
   to-master:
-    needs: [ to-staging, publish-flag ]
+    needs: [ to-staging, publish-flag, assert-sonatype-credentials-set ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -116,7 +121,7 @@ jobs:
 #        uses: actions/setup-java@v2
 #        with:
 #          java-version: '8'
-#          distribution: 'adopt'
+#          distribution: 'temurin'
 #          cache: gradle
 #
 #      - name: Set up Python 3.10
@@ -130,7 +135,7 @@ jobs:
 #          python test_as_git_module.py
 
   to-github-release:
-    needs: [ to-master, are-sonatype-credentials-set ]
+    needs: [ to-master ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -138,7 +143,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '8'
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: gradle
 
 #      - name: Build binaries (with testing)
@@ -176,7 +181,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '8'
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: gradle
       - name: Publish as Maven to GitHub
         run:
@@ -187,8 +192,8 @@ jobs:
 
   ##################################################################################################
 
-  are-sonatype-credentials-set:
-    needs: [ to-master, publish-flag ]
+  assert-sonatype-credentials-set:
+    needs: [ publish-flag ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -213,7 +218,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '8'
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: gradle
       - name: Publish as Maven to Sonatype
         run:
