@@ -56,11 +56,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: fwilhe2/setup-kotlin@main
-        with:
-          version: 1.7.0
-      - name: Run the script
-        run: kotlin .github/get_target_pkgver.main.kts
+      - name: Setup KScript
+        run: |
+          curl -s "https://get.sdkman.io" | bash
+          source "$HOME/.sdkman/bin/sdkman-init.sh"
+          sdk install kotlin 
+          sdk install kscript
+      - name: Check version
+        run: |
+          source "$HOME/.sdkman/bin/sdkman-init.sh"
+          kscript -s .github/get_target_pkgver.kts
 
   test-dev-as-module-from-git:
     runs-on: ${{ matrix.os }}
@@ -136,6 +141,19 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
+      - name: Setup KScript
+        run: |
+          curl -s "https://get.sdkman.io" | bash
+          source "$HOME/.sdkman/bin/sdkman-init.sh"
+          sdk install kotlin 
+          sdk install kscript
+
+      - name: Get the project version
+        run: |
+          source "$HOME/.sdkman/bin/sdkman-init.sh"
+          echo "PKGVER=$(kscript -s .github/get_target_pkgver.kts)" >> $GITHUB_ENV        
+          
+
 #      - name: Get the project version
 #        run: |
 #           # warm up (skip progress indicator)
@@ -143,18 +161,18 @@ jobs:
 #           # store version to var
 #           echo "PKGVER=$(./gradlew pkgver -q --console=plain)" >> $GITHUB_ENV
 
-      - uses: fwilhe2/setup-kotlin@main
-        with:
-          version: 1.7.0
+#      - uses: fwilhe2/setup-kotlin@main
+#        with:
+#          version: 1.7.0
 #      - name: Run the script
-#        run: kotlin .github/get_target_pkgver.main.kts
+#        run: kotlin .github/get_target_pkgver.kts
 
-      - name: Get the project version
-        run: |
-           # warm up (skip progress indicator)
-           ./gradlew pkgver -q
-           # store version to var
-           echo "PKGVER=$(kotlin .github/get_target_pkgver.main.kts)" >> $GITHUB_ENV        
+#      - name: Get the project version
+#        run: |
+#           # warm up (skip progress indicator)
+#           ./gradlew pkgver -q
+#           # store version to var
+#           echo "PKGVER=$(kotlin .github/get_target_pkgver.main.kts)" >> $GITHUB_ENV
 
       - name: Publish GitHub release
         id: publish_github_release

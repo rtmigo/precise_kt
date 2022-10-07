@@ -2,13 +2,25 @@
 
 import com.lordcodes.turtle.*
 import java.nio.file.Paths
+import kotlin.concurrent.thread
 import kotlin.system.exitProcess
+
+fun <T:Any> timeLimited(seconds: Int, block: ()->T): T {
+    var result: T? = null
+    thread {
+        result = block()
+    }.join(seconds*1000L)
+    if (result==null)
+        throw Error("Failed to get the result withing the time specified")
+    else
+        return result!!
+}
 
 /**
  * Возвращает `true`, если репозитории гитхаба, соответствующем текущему `.git`,
  * уже существует релиз версии `version`.
  **/
-fun releaseExists(version: String): Boolean =
+fun releaseExists(version: String): Boolean = timeLimited(5) {
     try {
         shellRun("gh", listOf("release", "view", version))
         true
@@ -18,6 +30,7 @@ fun releaseExists(version: String): Boolean =
         else
             throw e
     }
+}
 
 fun String.looksLikeVersion() =
     """^\d+\.\d+.*$""".toRegex().matches(this)
@@ -27,12 +40,12 @@ fun String.looksLikeVersion() =
  * версию пакета. Запускаем Gradle, выясняем версию, возвращаем её.
  **/
 fun currentPkgVer(): String =
-    shellRun(
+    timeLimited(20) {  shellRun(
         Paths.get("gradlew").toAbsolutePath().toString(),
         listOf(
             "-quiet", "--no-daemon", "--console=plain",
             "pkgver")
-    )
+    )}
         .lines().last()
         .also {
             require(it.looksLikeVersion()) { it }
