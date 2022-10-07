@@ -192,7 +192,7 @@ jobs:
   ##################################################################################################
 
   are-sonatype-credentials-set:
-    needs: [ to-master, publish-flag ]
+    needs: [ publish-flag ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
