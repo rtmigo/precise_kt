@@ -66,6 +66,8 @@ jobs:
         run: |
           source "$HOME/.sdkman/bin/sdkman-init.sh"
           kscript -s .github/get_target_pkgver.kts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   test-dev-as-module-from-git:
     runs-on: ${{ matrix.os }}
@@ -151,7 +153,9 @@ jobs:
       - name: Get the project version
         run: |
           source "$HOME/.sdkman/bin/sdkman-init.sh"
-          echo "PKGVER=$(kscript -s .github/get_target_pkgver.kts)" >> $GITHUB_ENV        
+          echo "PKGVER=$(kscript -s .github/get_target_pkgver.kts)" >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
 
 #      - name: Get the project version
