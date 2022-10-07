@@ -60,7 +60,7 @@ jobs:
         with:
           version: 1.7.0
       - name: Run the script
-        run: kotlin .github/get_target_pkgver.main.kt
+        run: kotlin .github/get_target_pkgver.main.kts
 
   test-dev-as-module-from-git:
     runs-on: ${{ matrix.os }}
@@ -147,14 +147,14 @@ jobs:
         with:
           version: 1.7.0
 #      - name: Run the script
-#        run: kotlin .github/get_target_pkgver.main.kt
+#        run: kotlin .github/get_target_pkgver.main.kts
 
       - name: Get the project version
         run: |
            # warm up (skip progress indicator)
            ./gradlew pkgver -q
            # store version to var
-           echo "PKGVER=$(kotlin .github/get_target_pkgver.main.kt)" >> $GITHUB_ENV        
+           echo "PKGVER=$(kotlin .github/get_target_pkgver.main.kts)" >> $GITHUB_ENV        
 
       - name: Publish GitHub release
         id: publish_github_release
