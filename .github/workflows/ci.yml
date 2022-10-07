@@ -191,7 +191,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Check variables
-        run:
+        run: |
           if [ -z "$MAVEN_GPG_KEY" ]; then exit 1; fi
           if [ -z "$MAVEN_GPG_PASSWORD" ]; then exit 1; fi
           if [ -z "$SONATYPE_USERNAME" ]; then exit 1; fi
