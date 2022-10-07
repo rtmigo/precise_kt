@@ -14,10 +14,14 @@ on:
       - '**.txt'
       - '.github/badges/**.svg'
 
-
+# This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
-  group: ci-tests-${{ github.ref }}-1
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
   cancel-in-progress: true
+
+#concurrency:
+#  group: ci-tests-${{ github.ref }}-1
+#  cancel-in-progress: true
 
 jobs:
   unit-test:
@@ -95,7 +99,7 @@ jobs:
       - uses: actions/checkout@master
 
   to-master:
-    needs: [ to-staging, publish-flag ]
+    needs: [ to-staging, publish-flag, are-sonatype-credentials-set ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -130,7 +134,7 @@ jobs:
 #          python test_as_git_module.py
 
   to-github-release:
-    needs: [ to-master, are-sonatype-credentials-set ]
+    needs: [ to-master ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
