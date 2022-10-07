@@ -61,6 +61,8 @@ jobs:
         with:
           python-version: '3.10'
       - run: python .github/get_target_pkgver.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   assert-github-release-not-exists:
     runs-on: ubuntu-latest
