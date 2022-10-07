@@ -62,9 +62,12 @@ jobs:
           source "$HOME/.sdkman/bin/sdkman-init.sh"
           sdk install kotlin 
           sdk install kscript
+          which kscript
 
       - name: Hello
-        run: kscript 'println("hello world")'
+        run: |
+          source "$HOME/.sdkman/bin/sdkman-init.sh"
+          kscript 'println("hello world")'
 
   test-dev-as-module-from-git:
     runs-on: ${{ matrix.os }}
