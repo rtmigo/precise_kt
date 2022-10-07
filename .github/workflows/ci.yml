@@ -141,6 +141,7 @@ jobs:
   assert-github-release-not-exists:
     # проверяем, что из Gradle можно получить номер релиза, и что такой релиз
     # ещё не публиковался
+    needs: [publish-flag]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -160,7 +161,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   to-github-release:
-    needs: [ to-master, assert-github-release-not-exists ]
+    needs: [ to-master ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
