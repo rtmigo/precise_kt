@@ -188,15 +188,16 @@ jobs:
   ##################################################################################################
 
   are-sonatype-credentials-set:
+    needs: [ to-master, publish-flag ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Check variables
         run:
           if [ -z "$MAVEN_GPG_KEY" ]; then exit 1; fi
-          if [ -z "MAVEN_GPG_PASSWORD" ]; then exit 1; fi
-          if [ -z "SONATYPE_USERNAME" ]; then exit 1; fi
-          if [ -z "SONATYPE_PASSWORD" ]; then exit 1; fi
+          if [ -z "$MAVEN_GPG_PASSWORD" ]; then exit 1; fi
+          if [ -z "$SONATYPE_USERNAME" ]; then exit 1; fi
+          if [ -z "$SONATYPE_PASSWORD" ]; then exit 1; fi
         env:
           MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
           MAVEN_GPG_PASSWORD: ${{ secrets.MAVEN_GPG_PASSWORD }}
