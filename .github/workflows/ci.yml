@@ -46,7 +46,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: ${{ matrix.jdk_version }}
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: gradle
 
       - name: Run unit tests
@@ -68,7 +68,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '8'
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: gradle
 
       - name: Set up Python 3.10
@@ -121,7 +121,7 @@ jobs:
 #        uses: actions/setup-java@v2
 #        with:
 #          java-version: '8'
-#          distribution: 'adopt'
+#          distribution: 'temurin'
 #          cache: gradle
 #
 #      - name: Set up Python 3.10
@@ -143,7 +143,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '8'
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: gradle
 
 #      - name: Build binaries (with testing)
@@ -181,7 +181,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '8'
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: gradle
       - name: Publish as Maven to GitHub
         run:
@@ -218,7 +218,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '8'
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: gradle
       - name: Publish as Maven to Sonatype
         run:
