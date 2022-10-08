@@ -7,12 +7,12 @@ on:
       - '**.md'
       - '**.txt'
       - '.github/badges/**.svg'
-  pull_request:
-    branches: [ dev ]
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '.github/badges/**.svg'
+#  pull_request:
+#    branches: [ dev ]
+#    paths-ignore:
+#      - '**.md'
+#      - '**.txt'
+#      - '.github/badges/**.svg'
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
