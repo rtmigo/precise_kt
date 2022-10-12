@@ -45,7 +45,7 @@ repositories {
 }                
 
 dependencies {
-    implementation("io.github.rtmigo:precise:0.1.0")
+    implementation("io.github.rtmigo:precise-one:0.1.0")
 }    
 ```
 
@@ -59,7 +59,7 @@ repositories {
 }                
 
 dependencies {
-    implementation "io.github.rtmigo:precise:0.1.0"
+    implementation "io.github.rtmigo:precise-one:0.1.0"
 }
 ```
 
@@ -73,7 +73,7 @@ dependencies {
 <dependencies>
     <dependency>
         <groupId>io.github.rtmigo</groupId>
-        <artifactId>precise</artifactId>
+        <artifactId>precise-one</artifactId>
         <version>0.1.0</version>
     </dependency>
 </dependencies>
@@ -88,7 +88,7 @@ dependencies {
 ```kotlin
 sourceControl {
     gitRepository(java.net.URI("https://github.com/rtmigo/precise_kt.git")) {
-        producesModule("io.github.rtmigo:precise")
+        producesModule("io.github.rtmigo:precise-one")
     }
 }
 ```
@@ -97,7 +97,7 @@ sourceControl {
 
 ```kotlin
 dependencies {
-    implementation("io.github.rtmigo:precise") {
+    implementation("io.github.rtmigo:precise-one") {
         version { branch = "staging" }
     }
 }
