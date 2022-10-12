@@ -24,9 +24,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: "Check file existence"
-      run: |
-        test -f .github/gradle_pkgver_not_on_gh.py
-        test -f .github/gradle_pkgver_not_on_gh123.py
+      run: test -f .github/gradle_pkgver_not_on_gh.py
+    - name: "Check file existence"
+      run: test -f .github/gradle_pkgver_not_on_gh123.py
 
   unit-test:
     timeout-minutes: 15
