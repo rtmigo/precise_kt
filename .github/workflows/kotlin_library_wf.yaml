@@ -36,12 +36,13 @@ jobs:
       - uses: actions/checkout@master
 
 
-  check-necessary-files:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: "Check file existence"
-      run: test -f .github/gradle_pkgver_not_on_gh.py
+#  check-necessary-files:
+#    needs: [ unit-test, test-dev-as-module-from-git, check-necessary-files ]
+#    runs-on: ubuntu-latest
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: "Check file existence"
+#      run: test -f .github/gradle_pkgver_not_on_gh.py
 
   unit-test:
     timeout-minutes: 15
@@ -97,7 +98,7 @@ jobs:
           python test_as_git_module.py dev
 
   to-staging:
-    needs: [ unit-test, test-dev-as-module-from-git, check-necessary-files ]
+    needs: [ unit-test, test-dev-as-module-from-git ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
