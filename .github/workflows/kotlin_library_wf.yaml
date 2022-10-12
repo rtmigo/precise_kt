@@ -1,4 +1,8 @@
-# file from rtmigo/cicd (must be synced by hubget, not edited)
+################################################################################
+#
+#            BEFORE EDITING MAKE SURE THIS IS NOT A SYNCED COPY
+#
+################################################################################
 
 name: kotlin-library-wf
 
@@ -16,6 +20,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  check-files:
+    runs-on: ubuntu-latest
+    steps:
+    - name: "Check file existence"
+      uses: andstor/file-existence-action@v1
+      with:
+        allow_failure: true
+        files: "test.xxx"
+
+
   unit-test:
     timeout-minutes: 15
 
@@ -106,7 +120,7 @@ jobs:
           target_branch: master
           github_token: ${{ github.token }}
 
-  ## GITHUB RELEASE AND PACKAGE ####################################################################
+  ## GITHUB RELEASE AND PACKAGE ################################################
 
   assert-github-release-not-exists:
     # проверяем, что из Gradle можно получить номер релиза, и что такой релиз
@@ -179,7 +193,7 @@ jobs:
           # this token is predefined
           GITHUB_PKGPUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  ## MAVEN CENTRAL #################################################################################
+  ## MAVEN CENTRAL #############################################################
 
   assert-sonatype-credentials-set:
     needs: [ publish-flag ]
