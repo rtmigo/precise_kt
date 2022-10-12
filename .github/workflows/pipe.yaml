@@ -97,8 +97,37 @@ jobs:
           pip install git+https://github.com/rtmigo/tempp_py
           python test_as_git_module.py dev
 
+  unique_release_version:
+    # Узнаёт версию Java-пакета и запоминает её на случай релиза.
+    #
+    # После релиза в гитхаб считаем недопустимыми существования вариаций кода
+    # с той же версией. Даже тесты будем считать несостоявшимися. Так мы будем
+    # уверены, что любой прошедший тесты код можно зарелизить.
+    runs-on: ubuntu-latest
+    outputs:
+      version: $ {{ steps.get_version.outputs.result }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup JDK
+        # Java понадобится, чтобы из Gradle получить номер релиза.
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+          cache: gradle
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Get the project version
+        id: get_version
+        run: echo "::set-output name=result::$(python .github/gradle_pkgver_not_on_gh.py)"
+      - run: python .github/gradle_pkgver_not_on_gh.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   to-staging:
-    needs: [ unit-test, test-dev-as-module-from-git ]
+    needs: [ unit-test, test-dev-as-module-from-git, unique_release_version ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -124,56 +153,47 @@ jobs:
 
   ## GITHUB RELEASE AND PACKAGE ################################################
 
-#  assert-github-release-not-exists:
-#    # проверяем, что из Gradle можно получить номер релиза, и что такой релиз
-#    # ещё не публиковался
-#    needs: [ release-flag ]
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v3
+
+
+  to-github-release:
+    needs: [ to-master, release-flag, unique_release_version ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Publish GitHub release
+        id: publish_github_release
+        uses: softprops/action-gh-release@v1
+        with:
+          # тег для релиза мы давно выяснили
+          tag_name: ${{ needs.unique_release_version.outputs.version }}
+          files: ./build/libs/*.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
 #      - name: Setup JDK 8
-#        # Java понадобится, чтобы из Gradle получить номер релиза.
 #        uses: actions/setup-java@v2
 #        with:
 #          java-version: '8'
 #          distribution: 'temurin'
 #          cache: gradle
+#
 #      - name: Set up Python 3.10
 #        uses: actions/setup-python@v4
 #        with:
 #          python-version: '3.10'
-#      - run: python .github/gradle_pkgver_not_on_gh.py
+#
+#      - name: Get the project version
+#        run: |
+#          echo "PKGVER=$(python .github/gradle_pkgver_not_on_gh.py)" >> $GITHUB_ENV
 #        env:
 #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  to-github-release:
-    needs: [ to-master, release-flag ]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup JDK 8
-        uses: actions/setup-java@v2
-        with:
-          java-version: '8'
-          distribution: 'temurin'
-          cache: gradle
-
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
-      - name: Get the project version
-        run: |
-          echo "PKGVER=$(python .github/gradle_pkgver_not_on_gh.py)" >> $GITHUB_ENV
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish GitHub release
-        id: publish_github_release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ env.PKGVER }}
-          files: ./build/libs/*.jar
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#
+#      - name: Publish GitHub release
+#        id: publish_github_release
+#        uses: softprops/action-gh-release@v1
+#        with:
+#          tag_name: ${{ env.PKGVER }}
+#          files: ./build/libs/*.jar
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
