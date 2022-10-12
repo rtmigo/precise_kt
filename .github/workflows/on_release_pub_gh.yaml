@@ -2,7 +2,7 @@ name: Publish Maven to GitHub Packages
 
 on:
   release:
-    types: [created]
+    types: [published] # работает для релизов и пререлизов
 
 jobs:
   publish-package:
