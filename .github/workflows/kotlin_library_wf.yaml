@@ -1,3 +1,5 @@
+# file from rtmigo/cicd (must be synced by hubget, not edited)
+
 name: kotlin-library-wf
 
 on:
