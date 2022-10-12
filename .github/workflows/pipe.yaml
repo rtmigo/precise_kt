@@ -29,21 +29,6 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
-#  master-flag:
-#    if: contains(github.event.head_commit.message, '!!master') || contains(github.event.head_commit.message, '!!release')
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@master
-
-
-#  check-necessary-files:
-#    needs: [ unit-test, test-dev-as-module-from-git, check-necessary-files ]
-#    runs-on: ubuntu-latest
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: "Check file existence"
-#      run: test -f .github/gradle_pkgver_not_on_gh.py
-
   unit-test:
     timeout-minutes: 15
 
@@ -97,7 +82,7 @@ jobs:
           pip install git+https://github.com/rtmigo/tempp_py
           python test_as_git_module.py dev
 
-  unique_release_version:
+  check-version:
     # Узнаёт версию Java-пакета и запоминает её на случай релиза.
     #
     # После релиза в гитхаб считаем недопустимыми существования вариаций кода
@@ -124,12 +109,9 @@ jobs:
         run: echo "::set-output name=result::$(python .github/gradle_pkgver_not_on_gh.py)"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#      - run: python .github/gradle_pkgver_not_on_gh.py
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   to-staging:
-    needs: [ unit-test, test-dev-as-module-from-git, unique_release_version ]
+    needs: [ unit-test, test-dev-as-module-from-git, check-version ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -154,10 +136,8 @@ jobs:
 
   ## GITHUB RELEASE AND PACKAGE ################################################
 
-
-
   to-github-release:
-    needs: [ to-staging, release-flag, unique_release_version ]
+    needs: [ to-staging, release-flag, check-version ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -166,7 +146,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           # тег для релиза мы давно выяснили
-          tag_name: ${{ needs.unique_release_version.outputs.version }}
+          tag_name: ${{ needs.check-version.outputs.version }}
           files: ./build/libs/*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -193,30 +173,39 @@ jobs:
           # the secrets.GITHUB_TOKEN is predefined
           GITHUB_PKGPUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  assert-sonatype-credentials-set:
+    needs: [ release-flag ]  # проверим это быстро сразу
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check variables
+        run: |
+          if [ -z "$MAVEN_GPG_KEY" ]; then exit 1; fi
+          if [ -z "$MAVEN_GPG_PASSWORD" ]; then exit 1; fi
+          if [ -z "$SONATYPE_USERNAME" ]; then exit 1; fi
+          if [ -z "$SONATYPE_PASSWORD" ]; then exit 1; fi
+        env:
+          MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
+          MAVEN_GPG_PASSWORD: ${{ secrets.MAVEN_GPG_PASSWORD }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
 
-#      - name: Setup JDK 8
-#        uses: actions/setup-java@v2
-#        with:
-#          java-version: '8'
-#          distribution: 'temurin'
-#          cache: gradle
-#
-#      - name: Set up Python 3.10
-#        uses: actions/setup-python@v4
-#        with:
-#          python-version: '3.10'
-#
-#      - name: Get the project version
-#        run: |
-#          echo "PKGVER=$(python .github/gradle_pkgver_not_on_gh.py)" >> $GITHUB_ENV
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#
-#      - name: Publish GitHub release
-#        id: publish_github_release
-#        uses: softprops/action-gh-release@v1
-#        with:
-#          tag_name: ${{ env.PKGVER }}
-#          files: ./build/libs/*.jar
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  to-maven-central-package:
+    needs: [ assert-sonatype-credentials-set, release-flag, to-github-release ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+          cache: gradle
+      - name: Publish as Maven to Sonatype
+        run:
+          ./gradlew publish closeAndReleaseRepository
+        env:
+          MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
+          MAVEN_GPG_PASSWORD: ${{ secrets.MAVEN_GPG_PASSWORD }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
