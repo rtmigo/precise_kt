@@ -1,19 +1,14 @@
-################################################################################
-#
-#            BEFORE EDITING MAKE SURE THIS IS NOT A SYNCED COPY
-#
-################################################################################
-
 import os.path
 import re
 import subprocess
 import sys
 
 
-def _release_exists(ver: str) -> bool:
-    """Возвращает `true`, если репозитории гитхаба, соответствующем текущему `.git`,
-       уже существует релиз версии `ver`."""
+def _gh_release_exists(ver: str) -> bool:  # не используется с 2022-10
+    """Возвращает `true`, если репозитории гитхаба, соответствующем текущему
+    `.git`, уже существует релиз версии `ver`. """
     try:
+        # todo проверять те
         subprocess.check_output(["gh", "release", "view", ver],
                                 stderr=subprocess.STDOUT)
         return True
@@ -23,7 +18,12 @@ def _release_exists(ver: str) -> bool:
         raise
 
 
-def _current_pkgver() -> str:
+def _git_tag_exists(tag: str) -> bool:
+    return subprocess.check_output(["git", "tag", "-l", tag]) \
+               .decode().strip() != ""
+
+
+def _gradle_pkgver() -> str:
     """Полагаем, что в Gradle определён таск "pkgver", который печатает текущую
        версию пакета. Запускаем Gradle, выясняем версию, возвращаем её."""
     ver = subprocess.check_output(
@@ -34,7 +34,7 @@ def _current_pkgver() -> str:
     return ver
 
 
-def target_version_to_stdout():
+def _print_unique_pkgver_or_throw():
     """Позволяет определить, готовы ли мы опубликовать текущий проект Gradle
     в качестве релиза на GitHub.
 
@@ -47,12 +47,12 @@ def target_version_to_stdout():
     Эта функция может использоваться и непосредственно перед публикацией -
     и как предварительная проверка (чтобы не затевать долгий билд).
     """
-    ver = _current_pkgver()
-    if _release_exists(ver):
-        print(f"Release {ver} already exists")
+    ver = _gradle_pkgver()
+    if _git_tag_exists(ver):
+        print(f"Tag {ver} already exists")
         sys.exit(1)
     print(ver)
 
 
 if __name__ == "__main__":
-    target_version_to_stdout()
+    _print_unique_pkgver_or_throw()
