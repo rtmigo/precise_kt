@@ -20,7 +20,7 @@ plugins {
 }
 
 group = "io.github.rtmigo"
-version = "0.1.0-dev12"
+version = "0.1.0-dev13"
 
 tasks.register("pkgver") {
     doLast {
@@ -92,3 +92,4 @@ tasks.register<Jar>("uberJar") {
                  .map { zipTree(it) }
          })
 }
+
