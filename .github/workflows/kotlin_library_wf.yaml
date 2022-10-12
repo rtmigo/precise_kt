@@ -29,7 +29,6 @@ jobs:
         allow_failure: true
         files: ".github/gradle_pkgver_not_on_gh.py"
 
-
   unit-test:
     timeout-minutes: 15
 
