@@ -20,14 +20,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  check-files:
+  check-necessary-files:
     runs-on: ubuntu-latest
     steps:
     - name: "Check file existence"
       uses: andstor/file-existence-action@v1
       with:
         allow_failure: true
-        files: "test.xxx"
+        files: ".github/gradle_pkgver_not_on_gh.py"
 
 
   unit-test:
@@ -88,7 +88,7 @@ jobs:
           python test_as_git_module.py dev
 
   to-staging:
-    needs: [ unit-test, test-dev-as-module-from-git ]
+    needs: [ unit-test, test-dev-as-module-from-git, check-necessary-files ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -140,7 +140,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-      - run: python .github/get_target_pkgver.py
+      - run: python .github/gradle_pkgver_not_on_gh.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -162,7 +162,7 @@ jobs:
 
       - name: Get the project version
         run: |
-          echo "PKGVER=$(python .github/get_target_pkgver.py)" >> $GITHUB_ENV
+          echo "PKGVER=$(python .github/gradle_pkgver_not_on_gh.py)" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -213,7 +213,7 @@ jobs:
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
 
   to-maven-central-package:
-    needs: [ to-master ]
+    needs: [ to-master, assert-sonatype-credentials-set ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
