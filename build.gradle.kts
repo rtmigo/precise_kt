@@ -20,7 +20,7 @@ plugins {
 }
 
 group = "io.github.rtmigo"
-version = "0.1.0-dev9"
+version = "0.1.0-dev10"
 
 tasks.register("pkgver") {
     doLast {
