@@ -110,6 +110,25 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  assert-sonatype-credentials-set:
+    # это мы проверяем не всегда, а только перед релизом. Но быстро и сразу
+    needs: [ release-flag ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check variables
+        run: |
+          if [ -z "$MAVEN_GPG_KEY" ]; then exit 1; fi
+          if [ -z "$MAVEN_GPG_PASSWORD" ]; then exit 1; fi
+          if [ -z "$SONATYPE_USERNAME" ]; then exit 1; fi
+          if [ -z "$SONATYPE_PASSWORD" ]; then exit 1; fi
+        env:
+          MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
+          MAVEN_GPG_PASSWORD: ${{ secrets.MAVEN_GPG_PASSWORD }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+
+
   to-staging:
     needs: [ unit-test, test-dev-as-module-from-git, check-version ]
     runs-on: ubuntu-latest
@@ -137,7 +156,7 @@ jobs:
   ## GITHUB RELEASE AND PACKAGE ################################################
 
   to-github-release:
-    needs: [ to-staging, release-flag, check-version ]
+    needs: [ to-staging, release-flag, check-version, assert-sonatype-credentials-set ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -150,7 +169,6 @@ jobs:
           files: ./build/libs/*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 
   to-github-package:
     # Полагаем, что без токенов наш Gradle публиковать не умеет никуда.
@@ -173,25 +191,9 @@ jobs:
           # the secrets.GITHUB_TOKEN is predefined
           GITHUB_PKGPUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  assert-sonatype-credentials-set:
-    needs: [ release-flag ]  # проверим это быстро сразу
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Check variables
-        run: |
-          if [ -z "$MAVEN_GPG_KEY" ]; then exit 1; fi
-          if [ -z "$MAVEN_GPG_PASSWORD" ]; then exit 1; fi
-          if [ -z "$SONATYPE_USERNAME" ]; then exit 1; fi
-          if [ -z "$SONATYPE_PASSWORD" ]; then exit 1; fi
-        env:
-          MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
-          MAVEN_GPG_PASSWORD: ${{ secrets.MAVEN_GPG_PASSWORD }}
-          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
 
   to-maven-central-package:
-    needs: [ assert-sonatype-credentials-set, release-flag, to-github-release ]
+    needs: [ to-github-release ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
