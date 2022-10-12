@@ -122,9 +122,11 @@ jobs:
       - name: Get the project version
         id: get_version
         run: echo "::set-output name=result::$(python .github/gradle_pkgver_not_on_gh.py)"
-      - run: python .github/gradle_pkgver_not_on_gh.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      - run: python .github/gradle_pkgver_not_on_gh.py
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   to-staging:
     needs: [ unit-test, test-dev-as-module-from-git, unique_release_version ]
