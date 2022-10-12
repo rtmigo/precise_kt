@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: "Ls"
-      run: ls .github/gradle_pkgver_not_on_gh.py
+      run: ls .github
     - name: "Check file existence"
       run: test -f .github/gradle_pkgver_not_on_gh.py
     - name: "Check file existence"
