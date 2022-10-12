@@ -1,8 +1,17 @@
 name: Publish Maven to GitHub Packages
 
+
+# экшн не запускается для релизов, созданных гитхаб токеном
+# https://stackoverflow.com/a/69063453/11700241
+
+#on:
+#  release:
+#    types: [published] # работает для релизов и пререлизов
+
 on:
-  release:
-    types: [published] # работает для релизов и пререлизов
+  workflow_run:
+    workflows: ["Gradle Pipe"]
+    types: [completed]
 
 jobs:
   publish-package:
