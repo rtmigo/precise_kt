@@ -20,7 +20,7 @@ plugins {
 }
 
 group = "io.github.rtmigo"
-version = "0.1.0-dev11"
+version = "0.1.0-dev12"
 
 tasks.register("pkgver") {
     doLast {
@@ -31,7 +31,6 @@ tasks.register("pkgver") {
 java {
     withSourcesJar()  // для Maven Central
 }
-
 
 repositories {
     mavenCentral()
