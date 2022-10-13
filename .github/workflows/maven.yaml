@@ -28,6 +28,10 @@ jobs:
         run: |
           pip install git+https://github.com/rtmigo/rtmaven_py
 
+      - name: build
+        run: python msnpub.py
+
+
 #      - name: Get the project version
 #        id: get_version
 #        run: echo "::set-output name=result::$(python .github/gradle_pkgver_notag.py)"
