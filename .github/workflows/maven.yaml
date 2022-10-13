@@ -40,7 +40,6 @@ jobs:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
 
-
 #      - name: Get the project version
 #        id: get_version
 #        run: echo "::set-output name=result::$(python .github/gradle_pkgver_notag.py)"
