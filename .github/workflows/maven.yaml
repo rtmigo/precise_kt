@@ -33,7 +33,9 @@ jobs:
           pip install git+https://github.com/rtmigo/rtmaven_py
 
       - name: build
-        run: python msnpub.py
+        run: |
+          export GPG_TTY=$(tty)
+          python msnpub.py
         env:
           MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
           MAVEN_GPG_PASSWORD: ${{ secrets.MAVEN_GPG_PASSWORD }}
