@@ -1,3 +1,3 @@
-rootProject.name = "precise-one"
+rootProject.name = "precise"
 //includeBuild("convention-plugins")
 //includeBuild("buildSrc")

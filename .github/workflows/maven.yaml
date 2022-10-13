@@ -1,0 +1,33 @@
+name: Maven Tst
+
+on:
+  push:
+    branches: [ dev ]
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/badges/**.svg'
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+#      - name: Setup JDK
+#        uses: actions/setup-java@v2
+#        with:
+#          java-version: '8'
+#          distribution: 'temurin'
+#          cache: gradle
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Set up RtMaven
+        run: pip install https://github.com/rtmigo/rtmaven_py
+
+#      - name: Get the project version
+#        id: get_version
+#        run: echo "::set-output name=result::$(python .github/gradle_pkgver_notag.py)"
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
