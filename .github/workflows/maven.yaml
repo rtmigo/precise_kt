@@ -26,7 +26,6 @@ jobs:
 
       - name: Set up RtMaven
         run: |
-          git config --global url."https://${{ secrets.GITHUB_TOKEN }}@github".insteadOf https://github
           pip install https://github.com/rtmigo/rtmaven_py
 
 #      - name: Get the project version
