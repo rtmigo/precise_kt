@@ -34,6 +34,7 @@ java {
 
 repositories {
     mavenCentral()
+
 }
 
 dependencies {
