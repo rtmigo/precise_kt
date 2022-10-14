@@ -1,9 +1,7 @@
 from pathlib import Path
 
 import time
-from rtmaven import maven_release_to_dir, Group, Artifact, StagingLib, Artifact, ProjectMeta, \
-    GithubRepo, \
-    Developer, eprint, eprint_header
+from rtmaven import stage, StagingLib, eprint, eprint_header
 from tempp import TempProject
 
 
@@ -22,6 +20,7 @@ def test_import_from_maven(staging_lib: StagingLib):
                         maven { url = uri("__REPO__") }
                         mavenCentral() 
                     }
+                    
                     application { mainClass.set("MainKt") }
     
                     dependencies {
@@ -57,29 +56,16 @@ def test_import_from_maven(staging_lib: StagingLib):
     eprint("Everything is OK!")
 
 
-# test_import_from_maven(
-#     maven_repo_url="https://s01.oss.sonatype.org/content/repositories/iogithubrtmigo-1014/",
-#     artifact=Artifact.parse("io.github.rtmigo:precise:0.1.0-dev19")
-# )
-
 if __name__ == "__main__":
-    staging = maven_release_to_dir(
-        ProjectMeta(group=Group("io.github.rtmigo"),
-                    artifact=Artifact("precise"),
-                    description="Kotlin/JVM compensated summation of Double sequences "
-                                "to calculate sum, mean, standard deviation",
-                    license_name="MIT License",
-                    github=GithubRepo(owner="rtmigo", repo="precise_kt", branch="master"),
-                    devs=[Developer(
-                        name="Artsiom iG",
-                        email="ortemeo@gmail.com")
-                        #    organization="Revercode",
-                        #   organization_url="https://revercode.com")
-                    ]),
-        #    deploy_dir=Path(__file__).parent / "build" / "rtmaven"
+    staging_lib = stage(
+        description="Kotlin/JVM compensated summation of Double sequences "
+                    "to calculate sum, mean, standard deviation",
+        github_url="https://github.com/rtmigo/precise_kt",
+        github_branch="master",
+        developer="Artsiom iG <ortemeo@gmail.com>",
+        license="MIT"
     )
 
     eprint_header("Testing staging")
     eprint()
-    test_import_from_maven(staging)
-
+    test_import_from_maven(staging_lib)

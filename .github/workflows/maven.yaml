@@ -43,6 +43,8 @@ jobs:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
 
+          # tmpro
+
 
 #      - name: Get the project version
 #        id: get_version
