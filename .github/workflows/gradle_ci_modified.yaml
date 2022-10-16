@@ -141,7 +141,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Check script exists
-        run: ls ./publish_to_maven_central1.py
+        run: ls ./publish_to_maven_central.py
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
