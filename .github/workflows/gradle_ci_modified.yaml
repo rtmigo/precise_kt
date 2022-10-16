@@ -88,7 +88,7 @@ jobs:
         id: get_version
         run: |
           VERSION=$(./gradlew properties | grep version | awk '{print $2}')
-          if [ "$VERSION" ]; then
+          if [ ! -z "$VERSION" ]; then
             echo "Tag $VERSION already exists" 
             exit 1
           fi
