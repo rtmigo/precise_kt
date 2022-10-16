@@ -94,6 +94,7 @@ jobs:
 #            echo "Tag $VERSION already exists"
 #            exit 1
 #          fi
+
           echo "::set-output name=result::$VERSION"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
