@@ -1,20 +1,6 @@
-//#import vinogradle.maven.MavenMeta
-
-//import vinogradle.publish.PublishToGithub
-
-//import io.github.rtmigo.vinogradle.readme.*
-
 plugins {
     kotlin("jvm") version "1.7.20"
-
-    // Следующие плагины управляются из vinogradle, и их версии определяются в buildSrc.
-    // Но подключить их нужно и здесь
     id("org.jetbrains.dokka") version "1.7.20"
-    //id("signing")
-    //id("io.codearte.nexus-staging") // "closeAndReleaseRepository"
-    //id("maven-publish") // "publish"
-
-
     id("java-library")
     java
 }
@@ -22,20 +8,12 @@ plugins {
 group = "io.github.rtmigo"
 version = "0.1.0-dev22"
 
-tasks.register("pkgver") {
-    doLast {
-        println(project.version.toString())
-    }
-}
-
 java {
     withSourcesJar()  // для Maven Central
 }
 
 repositories {
     mavenCentral()
-//#    maven { this. }
-
 }
 
 dependencies {
@@ -59,18 +37,10 @@ tasks.test {
 }
 
 
-tasks.build {
-    //dependsOn(updateReadme)
-}
-
 tasks.register<Jar>("uberJar") {
     archiveClassifier.set("uber")
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
-
-    //project
-
     from(sourceSets.main.get().output)
-
     dependsOn(configurations.runtimeClasspath)
     from({
              configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }
