@@ -155,7 +155,6 @@ jobs:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
 
-
   to-maven-central-package:
     needs: [ to-github-release, assert-can-publish-central ]
     runs-on: ubuntu-latest
