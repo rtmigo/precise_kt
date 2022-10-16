@@ -84,6 +84,7 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
           cache: gradle
+
       - name: Get the project version
         id: get_version
         run: |
