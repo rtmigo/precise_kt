@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.github.rtmigo"
-version = "0.1.0-dev23"
+version = "0.1.0-dev22"
 
 java {
     withSourcesJar()  // для Maven Central
