@@ -1,6 +1,6 @@
 import sys
 
-from tempp import *
+from tempground import *
 
 module="io.github.rtmigo:precise"
 
@@ -19,7 +19,7 @@ try:
 except IndexError:
     imp_details = ""
 
-with TempProject(
+with TempGround(
         files={
             # minimalistic build script to use the library
             "build.gradle.kts": """
@@ -48,17 +48,9 @@ with TempProject(
             # kotlin code that imports and uses the library
             "src/main/kotlin/Main.kt": code}) as app:
 
-    app.print_files()
+    print(app.files_content())
     result = app.run(["gradle", "run", "-q"])
-
-    print("returncode", result.returncode)
-
-    print("stderr", "-"*80)
-    print(result.stderr)
-
-    print("stdout", "-"*80)
-    print(result.stdout)
-    print("-"*80)
+    print(result)
 
     assert result.returncode == 0
     assert result.stdout == "3.0\n", result.stdout

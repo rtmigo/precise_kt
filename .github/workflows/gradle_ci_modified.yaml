@@ -1,12 +1,3 @@
-################################################################################
-#
-#            BEFORE EDITING MAKE SURE THIS IS NOT A SYNCED COPY
-#
-################################################################################
-
-# Этот скрипт опционально готов публиковать релиз в Maven Central. Пока он
-# не получит команду на публикацию, он не будет проверять наличие реквизитов.
-
 name: Gradle Pipe
 
 on:
@@ -17,7 +8,6 @@ on:
       - '**.txt'
       - '.github/badges/**.svg'
 
-# This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
   cancel-in-progress: true
@@ -37,7 +27,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ ubuntu-latest ] # windows-latest
+        os: [ ubuntu-latest ] 
         jdk_version: [ 8, 18 ]
 
     steps:
@@ -58,7 +48,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ ubuntu-latest ] # windows-latest
+        os: [ ubuntu-latest ] 
     steps:
       - uses: actions/checkout@v2
 
@@ -72,65 +62,43 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name: Set up Python 3.10
+      - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.10'
 
       - name: Build sample project that uses the library
         run: |
-          pip install git+https://github.com/rtmigo/tempp_py
+          pip install git+https://github.com/rtmigo/tempground_py
           python test_as_git_module.py dev
 
   check-version:
-    # Узнаёт версию Java-пакета и запоминает её на случай релиза.
-    #
-    # После релиза в гитхаб считаем недопустимыми существования вариаций кода
-    # с той же версией. Даже тесты будем считать несостоявшимися. Так мы будем
-    # уверены, что любой прошедший тесты код можно зарелизить.
+
+    needs: [release-flag]
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.get_version.outputs.result }}
     steps:
       - uses: actions/checkout@v3
       - name: Setup JDK
-        # Java понадобится, чтобы из Gradle получить номер релиза.
+
         uses: actions/setup-java@v2
         with:
           java-version: '8'
           distribution: 'temurin'
           cache: gradle
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
+#      - name: Set up Python
+#        uses: actions/setup-python@v4
+#        with:
+#          python-version: '3.10'
       - name: Get the project version
         id: get_version
-        run: echo "::set-output name=result::$(python .github/gradle_pkgver_not_on_gh.py)"
+        run: echo "::set-output name=result::$(./gradlew properties | grep version | awk '{print $2}')"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  assert-sonatype-credentials-set:
-    # это мы проверяем не всегда, а только перед релизом. Но быстро и сразу
-    needs: [ release-flag ]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Check variables
-        run: |
-          if [ -z "$MAVEN_GPG_KEY" ]; then exit 1; fi
-          if [ -z "$MAVEN_GPG_PASSWORD" ]; then exit 1; fi
-          if [ -z "$SONATYPE_USERNAME" ]; then exit 1; fi
-          if [ -z "$SONATYPE_PASSWORD" ]; then exit 1; fi
-        env:
-          MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
-          MAVEN_GPG_PASSWORD: ${{ secrets.MAVEN_GPG_PASSWORD }}
-          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-
-
   to-staging:
-    needs: [ unit-test, test-dev-as-module-from-git, check-version ]
+    needs: [ unit-test, test-dev-as-module-from-git ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -153,61 +121,119 @@ jobs:
           target_branch: master
           github_token: ${{ github.token }}
 
-  ## GITHUB RELEASE AND PACKAGE ################################################
-
   to-github-release:
-    needs: [ to-staging, release-flag, check-version, assert-sonatype-credentials-set ]
+    needs: [ to-staging, release-flag, check-version ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+#      - name: Get the project version
+#        id: get_version
+#        run: echo "::set-output name=result::$(./gradlew properties | grep version | awk '{print $2}')"
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish GitHub release
         id: publish_github_release
         uses: softprops/action-gh-release@v1
         with:
-          # тег для релиза мы давно выяснили
+          
           tag_name: ${{ needs.check-version.outputs.version }}
           files: ./build/libs/*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  to-github-package:
-    # Полагаем, что без токенов наш Gradle публиковать не умеет никуда.
-    # А в данном случае мы ему даём GITHUB_PKGPUB_TOKEN, и он сориентируется,
-    # что публикуем в GitHub Packages
-    needs: [ to-github-release ]
+#  to-github-package:
+#
+#    needs: [ to-github-release ]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Setup JDK 8
+#        uses: actions/setup-java@v2
+#        with:
+#          java-version: '8'
+#          distribution: 'temurin'
+#          cache: gradle
+#      - name: Publish
+#        run:
+#          ./gradlew publish
+#        env:
+#
+#          GITHUB_PKGPUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  assert-sonatype-credentials-set:
+    needs: [release-flag]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Setup JDK 8
-        uses: actions/setup-java@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          java-version: '8'
-          distribution: 'temurin'
-          cache: gradle
-      - name: Publish
-        run:
-          ./gradlew publish
-        env:
-          # the secrets.GITHUB_TOKEN is predefined
-          GITHUB_PKGPUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
-  to-maven-central-package:
-    needs: [ to-github-release ]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup JDK 8
-        uses: actions/setup-java@v2
-        with:
-          java-version: '8'
-          distribution: 'temurin'
-          cache: gradle
-      - name: Publish as Maven to Sonatype
-        run:
-          ./gradlew publish closeAndReleaseRepository
+          python-version: '3.10'
+      - name: Set up deps
+        run: |
+          pip install git+https://github.com/rtmigo/rtmaven_py@dev
+      - name: Check variables
+        run: |
+          export GPG_TTY=$(tty)
+          rtmaven check
+#          if [ -z "$MAVEN_GPG_KEY" ]; then exit 1; fi
+#          if [ -z "$MAVEN_GPG_PASSWORD" ]; then exit 1; fi
+#          if [ -z "$SONATYPE_USERNAME" ]; then exit 1; fi
+#          if [ -z "$SONATYPE_PASSWORD" ]; then exit 1; fi
         env:
           MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
           MAVEN_GPG_PASSWORD: ${{ secrets.MAVEN_GPG_PASSWORD }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+
+#  to-maven-central-package:
+#    needs: [ to-github-release, assert-sonatype-credentials-set ]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Setup JDK 8
+#        uses: actions/setup-java@v2
+#        with:
+#          java-version: '8'
+#          distribution: 'temurin'
+#          cache: gradle
+#      - name: Publish as Maven to Sonatype
+#        run:
+#          ./gradlew publish closeAndReleaseRepository
+#        env:
+#          MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
+#          MAVEN_GPG_PASSWORD: ${{ secrets.MAVEN_GPG_PASSWORD }}
+#          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+#          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+#
+
+  to-maven-central-package:
+    needs: [ to-github-release, assert-sonatype-credentials-set ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+          cache: gradle
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+      - name: Set up deps
+        run: |
+          pip install git+https://github.com/rtmigo/rtmaven_py@dev
+          pip install tempground          
+
+      - name: Publish as Maven to Sonatype
+        run:
+          export GPG_TTY=$(tty)
+          python publish_to_maven_central.py
+        env:
+          MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
+          MAVEN_GPG_PASSWORD: ${{ secrets.MAVEN_GPG_PASSWORD }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+#
