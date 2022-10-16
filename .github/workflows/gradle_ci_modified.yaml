@@ -6,7 +6,6 @@ on:
     paths-ignore:
       - '**.md'
       - '**.txt'
-      - '.github/badges/**.svg'
 
 concurrency:
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
@@ -87,10 +86,6 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
           cache: gradle
-#      - name: Set up Python
-#        uses: actions/setup-python@v4
-#        with:
-#          python-version: '3.10'
       - name: Get the project version
         id: get_version
         run: echo "::set-output name=result::$(./gradlew properties | grep version | awk '{print $2}')"
@@ -126,11 +121,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-#      - name: Get the project version
-#        id: get_version
-#        run: echo "::set-output name=result::$(./gradlew properties | grep version | awk '{print $2}')"
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish GitHub release
         id: publish_github_release
         uses: softprops/action-gh-release@v1
@@ -141,30 +131,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-#  to-github-package:
-#
-#    needs: [ to-github-release ]
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Setup JDK 8
-#        uses: actions/setup-java@v2
-#        with:
-#          java-version: '8'
-#          distribution: 'temurin'
-#          cache: gradle
-#      - name: Publish
-#        run:
-#          ./gradlew publish
-#        env:
-#
-#          GITHUB_PKGPUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  assert-sonatype-credentials-set:
+  assert-can-publish-central:
     needs: [release-flag]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Check script exists
+        run: ./publish_to_maven_central.py
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -176,39 +149,14 @@ jobs:
         run: |
           export GPG_TTY=$(tty)
           rtmaven check
-#          if [ -z "$MAVEN_GPG_KEY" ]; then exit 1; fi
-#          if [ -z "$MAVEN_GPG_PASSWORD" ]; then exit 1; fi
-#          if [ -z "$SONATYPE_USERNAME" ]; then exit 1; fi
-#          if [ -z "$SONATYPE_PASSWORD" ]; then exit 1; fi
         env:
           MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
           MAVEN_GPG_PASSWORD: ${{ secrets.MAVEN_GPG_PASSWORD }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
 
-#  to-maven-central-package:
-#    needs: [ to-github-release, assert-sonatype-credentials-set ]
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Setup JDK 8
-#        uses: actions/setup-java@v2
-#        with:
-#          java-version: '8'
-#          distribution: 'temurin'
-#          cache: gradle
-#      - name: Publish as Maven to Sonatype
-#        run:
-#          ./gradlew publish closeAndReleaseRepository
-#        env:
-#          MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
-#          MAVEN_GPG_PASSWORD: ${{ secrets.MAVEN_GPG_PASSWORD }}
-#          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-#          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-#
-
   to-maven-central-package:
-    needs: [ to-github-release, assert-sonatype-credentials-set ]
+    needs: [ to-github-release, assert-can-publish-central ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -227,7 +175,7 @@ jobs:
           pip install git+https://github.com/rtmigo/rtmaven_py@dev
           pip install tempground          
 
-      - name: Publish as Maven to Sonatype
+      - name: Publish to Maven Central
         run: |
           export GPG_TTY=$(tty)
           python ./publish_to_maven_central.py
@@ -236,4 +184,3 @@ jobs:
           MAVEN_GPG_PASSWORD: ${{ secrets.MAVEN_GPG_PASSWORD }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-#
