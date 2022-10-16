@@ -88,6 +88,7 @@ jobs:
       - name: Get the project version
         id: get_version
         run: |
+          git fetch --all --tags
           #exit 1
           VERSION=$(./gradlew properties | grep version | awk '{print $2}')
           echo "Version $VERSION"
