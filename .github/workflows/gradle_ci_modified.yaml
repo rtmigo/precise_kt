@@ -90,7 +90,7 @@ jobs:
         run: |
           VERSION=$(./gradlew properties | grep version | awk '{print $2}')
           echo "Version $VERSION"
-          [[ -z $(git tag -l $VERSION) ]]
+          [[ ! -z $(git tag -l $VERSION) ]] && exit 1
           #          echo "Version $VERSION"
           #          [[ -z $(git tag -l $VERSION) ]]
           #          if [ ! -z $(git tag -l $VERSION) ]; then
