@@ -119,6 +119,20 @@ jobs:
           target_branch: master
           github_token: ${{ github.token }}
 
+#  to-github-release:
+#    needs: [ to-staging, release-flag, get-version-unique ]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@master
+#      - name: Publish GitHub release
+#        id: publish_github_release
+#        uses: softprops/action-gh-release@v1
+#        with:
+#          tag_name: ${{ needs.get-version-unique.outputs.version }}
+#          files: ./build/libs/*.jar
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   to-github-release:
     needs: [ to-staging, release-flag, get-version-unique ]
     runs-on: ubuntu-latest
@@ -126,12 +140,13 @@ jobs:
       - uses: actions/checkout@master
       - name: Publish GitHub release
         id: publish_github_release
-        uses: softprops/action-gh-release@v1
+        uses: ncipollo/release-action@v1.11.1
+        # https://github.com/ncipollo/release-action/releases
         with:
-          tag_name: ${{ needs.get-version-unique.outputs.version }}
-          files: ./build/libs/*.jar
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ needs.get-version-unique.outputs.version }}
+          token: $${{ secrets.GITHUB_TOKEN }}
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   assert-can-publish-to-central:
     needs: [release-flag]
