@@ -87,10 +87,10 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
           cache: gradle
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
+#      - name: Set up Python
+#        uses: actions/setup-python@v4
+#        with:
+#          python-version: '3.10'
       - name: Get the project version
         id: get_version
         run: echo "::set-output name=result::$(./gradlew properties | grep version | awk '{print $2}')"
