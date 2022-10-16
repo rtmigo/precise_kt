@@ -84,14 +84,27 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
           cache: gradle
+
       - name: Get the project version
         id: get_version
         run: |
+          git fetch --all --tags
+          #exit 1
           VERSION=$(./gradlew properties | grep version | awk '{print $2}')
-          if [ ! -z "$VERSION" ]; then
-            echo "Tag $VERSION already exists" 
-            exit 1
-          fi
+          echo "Version $VERSION"
+          echo "----"
+          git tag -l $VERSION
+          echo "----"
+          git tag -l
+          echo "----"
+          [[ ! -z $(git tag -l $VERSION) ]] && exit 1
+          #          echo "Version $VERSION"
+          #          [[ -z $(git tag -l $VERSION) ]]
+          #          if [ ! -z $(git tag -l $VERSION) ]; then
+          #            echo "Tag $VERSION already exists"
+          #            exit 1
+          #          fi
+
           echo "::set-output name=result::$VERSION"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
