@@ -8,7 +8,8 @@ on:
       - '**.txt'
 
 concurrency:
-  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  group: '${{ github.workflow }} 
+          @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
   cancel-in-progress: true
 
 jobs:
@@ -91,7 +92,8 @@ jobs:
           VERSION=$(./gradlew properties | grep version | awk '{print $2}')
           echo "Version $VERSION"
           [[ -z $(git tag -l $VERSION) ]]  # fail if stdout not empty, i.e. if tag exists
-          echo "::set-output name=result::$VERSION"
+          #echo "::set-output name=result::$VERSION"
+          echo "result=$VERSION" >>$GITHUB_OUTPUT
 
   to-staging:
     needs: [ unit-test, test-dev-as-module-from-git ]
