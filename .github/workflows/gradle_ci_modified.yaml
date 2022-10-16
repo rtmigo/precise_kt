@@ -88,11 +88,12 @@ jobs:
         id: get_version
         run: |
           VERSION=$(./gradlew properties | grep version | awk '{print $2}')
-          # [[ -z $(git tag -l 0.1.0-dev5) ]]
-          if [ ! -z $(git tag -l $VERSION) ]; then
-            echo "Tag $VERSION already exists" 
-            exit 1
-          fi
+          echo "Version $VERSION"
+          [[ -z $(git tag -l $VERSION) ]]
+#          if [ ! -z $(git tag -l $VERSION) ]; then
+#            echo "Tag $VERSION already exists"
+#            exit 1
+#          fi
           echo "::set-output name=result::$VERSION"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
