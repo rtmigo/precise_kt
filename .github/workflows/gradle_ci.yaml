@@ -73,7 +73,7 @@ jobs:
 
       - name: Build sample project that uses the library
         run: |
-          pip install git+https://github.com/rtmigo/tempp_py
+          pip install git+https://github.com/rtmigo/tempground_py
           python test_as_git_module.py dev
 
   check-version:

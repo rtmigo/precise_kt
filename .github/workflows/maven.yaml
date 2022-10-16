@@ -31,7 +31,8 @@ jobs:
       - name: Set up RtMaven
         run: |
           pip install git+https://github.com/rtmigo/rtmaven_py
-          pip install git+https://github.com/rtmigo/tempp_py
+          pip install tempground  
+
 
       - name: build
         run: |
