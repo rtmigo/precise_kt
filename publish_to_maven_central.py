@@ -58,7 +58,7 @@ def build_test_release():
     eprint_header("Testing")
     eprint()
     test_package(package)
-    # promote(package)
+    promote(package)
 
 
 if __name__ == "__main__":
