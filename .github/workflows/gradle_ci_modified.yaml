@@ -71,7 +71,7 @@ jobs:
           pip install git+https://github.com/rtmigo/tempground_py
           python test_as_git_module.py dev
 
-  check-version:
+  get-version-unique:
     needs: [release-flag]
     runs-on: ubuntu-latest
     outputs:
@@ -89,25 +89,12 @@ jobs:
         id: get_version
         run: |
           git fetch --all --tags
-          #exit 1
           VERSION=$(./gradlew properties | grep version | awk '{print $2}')
           echo "Version $VERSION"
-          echo "----"
-          git tag -l $VERSION
-          echo "----"
-          git tag -l
-          echo "----"
-          [[ ! -z $(git tag -l $VERSION) ]] && exit 1
-          #          echo "Version $VERSION"
-          #          [[ -z $(git tag -l $VERSION) ]]
-          #          if [ ! -z $(git tag -l $VERSION) ]; then
-          #            echo "Tag $VERSION already exists"
-          #            exit 1
-          #          fi
-
+          [[ -z $(git tag -l $VERSION) ]]  # fail if not empty, i.e. if tag exists
           echo "::set-output name=result::$VERSION"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        #env:
+        #  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   to-staging:
     needs: [ unit-test, test-dev-as-module-from-git ]
@@ -134,7 +121,7 @@ jobs:
           github_token: ${{ github.token }}
 
   to-github-release:
-    needs: [ to-staging, release-flag, check-version ]
+    needs: [ to-staging, release-flag, get-version-unique ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -143,12 +130,12 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           
-          tag_name: ${{ needs.check-version.outputs.version }}
+          tag_name: ${{ needs.get-version-unique.outputs.version }}
           files: ./build/libs/*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  assert-can-publish-central:
+  assert-can-publish-to-central:
     needs: [release-flag]
     runs-on: ubuntu-latest
     steps:
@@ -173,8 +160,8 @@ jobs:
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
 
 
-  to-maven-central-package:
-    needs: [ to-github-release, assert-can-publish-central ]
+  to-maven-central:
+    needs: [ to-github-release, assert-can-publish-to-central ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
