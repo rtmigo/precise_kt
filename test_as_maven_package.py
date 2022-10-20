@@ -1,9 +1,9 @@
 import json
 import subprocess
-from pathlib import Path
+#from pathlib import Path
 
-import time
-from rtmaven import prepare, stage, promote, Package, eprint, eprint_header
+#import time
+#from rtmaven import prepare, stage, promote, Package, eprint, eprint_header
 from tempground import TempGround
 
 
@@ -39,14 +39,14 @@ def test_package(maven_url: str, ver: str):
                     }
                 """}
     ) as app:
-        eprint(app.files_content())
+        print(app.files_content())
         result = app.run(["gradle", "run", "-q"])
-        eprint(result)
+        print(result)
 
         assert result.returncode == 0
         assert result.stdout == "3.0\n", result.stdout
 
-    eprint("Everything is OK!")
+    print("Everything is OK!")
 
 
 def build_test_release():
