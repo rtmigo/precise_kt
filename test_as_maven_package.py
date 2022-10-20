@@ -51,7 +51,7 @@ def test_package(maven_url: str, ver: str):
 
 def build_test_release():
     js = json.loads(subprocess.check_output(
-        ["java", "-jar", "/tmp/mavence.jar", "local", "io.github.rtmigo:precise"]))
+        ["java", "-jar", "/tmp/mavence.jar", "local"]))
     test_package(js["mavenRepo"], js["version"])
     # package = stage(prepare(
     #     description="Kotlin/JVM compensated summation of Double sequences "
