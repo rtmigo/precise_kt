@@ -49,7 +49,7 @@ publishing {
 
 
 group = "io.github.rtmigo"
-version = "0.1.0-dev24"
+version = "0.1.0-dev25"
 
 java {
     withSourcesJar()  // для Maven Central
