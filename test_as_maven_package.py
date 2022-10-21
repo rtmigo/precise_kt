@@ -1,9 +1,6 @@
 import json
+import os.path
 import subprocess
-#from pathlib import Path
-
-#import time
-#from rtmaven import prepare, stage, promote, Package, eprint, eprint_header
 from tempground import TempGround
 
 
@@ -50,20 +47,9 @@ def test_package(maven_url: str, ver: str):
 
 
 def build_test_release():
-    js = json.loads(subprocess.check_output(
-        ["java", "-jar", "/tmp/mavence.jar", "local"]))
-    test_package(js["mavenRepo"], js["version"])
-    # package = stage(prepare(
-    #     description="Kotlin/JVM compensated summation of Double sequences "
-    #                 "to calculate sum, mean, standard deviation",
-    #     github_url="https://github.com/rtmigo/precise_kt@master",
-    #     developer="Artsiom iG <ortemeo@gmail.com>",
-    #     license="MIT"))
-    #
-    # eprint_header("Testing")
-    # eprint()
-    # test_package(package)
-    # promote(package)
+    outp = json.loads(subprocess.check_output(
+        ["java", "-jar", os.path.expanduser("~/mavence.jar"), "local"]))
+    test_package(outp["mavenRepo"], outp["version"])
 
 
 if __name__ == "__main__":
