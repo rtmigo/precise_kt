@@ -26,6 +26,11 @@ publishing {
                     }
                 }
 
+                organization {
+                    this.name.set("Revercode")
+                    this.url.set("https://revercode.com")
+                }
+
                 scm {
                     connection.set("scm:git://github.com/rtmigo/$repo.git")
                     url.set("https://github.com/rtmigo/$repo")
