@@ -33,77 +33,19 @@ Most of the functions use "second-order iterative Kahan–Babuška algorithm"
 by [Klein (2005)](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.582.288&rep=rep1&type=pdf)
 .
 
-# Install
-
-<details><summary>Install from Maven Central with Gradle</summary>
-
-### build.gradle.kts (Gradle/Kotlin)
+# Install [![Maven Central](https://img.shields.io/maven-central/v/io.github.rtmigo/precise.svg)](https://search.maven.org/artifact/io.github.rtmigo/precise)
 
 ```kotlin
-repositories {
-    mavenCentral()
-}                
+// build.gradle.kts
 
 dependencies {
-    implementation("io.github.rtmigo:precise:0.1.0")
-}    
-```
-
-or
-
-### build.gradle (Gradle/Groovy)
-
-```groovy
-repositories {
-    mavenCentral()
-}                
-
-dependencies {
-    implementation "io.github.rtmigo:precise:0.1.0"
+    implementation("io.github.rtmigo:precise:X.X.X")
+    // replace X.X.X with actual version
 }
 ```
 
-</details>
-
-<details><summary>Install from Maven Central with Maven</summary>
-
-## Maven
-
-```xml    
-<dependencies>
-    <dependency>
-        <groupId>io.github.rtmigo</groupId>
-        <artifactId>precise</artifactId>
-        <version>0.1.0</version>
-    </dependency>
-</dependencies>
-```
-
-</details>
-
-<details><summary>Install latest from GitHub with Gradle/Kotlin</summary>
-
-#### settings.gradle.kts
-
-```kotlin
-sourceControl {
-    gitRepository(java.net.URI("https://github.com/rtmigo/precise_kt.git")) {
-        producesModule("io.github.rtmigo:precise")
-    }
-}
-```
-
-#### build.gradle.kts
-
-```kotlin
-dependencies {
-    implementation("io.github.rtmigo:precise") {
-        version { branch = "staging" }
-    }
-}
-```
-
-</details>
+Find the latest version and instructions for other build systems
+at [Maven Central](https://search.maven.org/artifact/io.github.rtmigo/precise).
 
 
 # Lambda functions
