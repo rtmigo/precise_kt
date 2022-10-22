@@ -16,13 +16,19 @@ publishing {
             pom {
                 val repo = "precise_kt"
                 name.set("precise")
-                description.set("Kotlin/JVM compensated summation of Double sequences to calculate sum, mean, standard deviation")
+                description.set("Kotlin/JVM compensated summation of Double " +
+                                    "sequences to calculate sum, mean, standard deviation")
                 url.set("https://github.com/rtmigo/$repo")
                 developers {
                     developer {
                         name.set("Artsiom iG")
                         email.set("ortemeo@gmail.com")
                     }
+                }
+
+                organization {
+                    this.name.set("Revercode")
+                    this.url.set("https://revercode.com")
                 }
 
                 scm {
@@ -40,16 +46,8 @@ publishing {
     }
 }
 
-//signing {
-//    useInMemoryPgpKeys(signingKey, signingPassword)
-//    sign(central)
-//}
-
-
-
-
 group = "io.github.rtmigo"
-version = "0.1.0-dev25"
+version = "0.1.0"
 
 java {
     withSourcesJar()  // для Maven Central
@@ -78,16 +76,4 @@ kotlin {
 
 tasks.test {
     useJUnitPlatform()
-}
-
-
-tasks.register<Jar>("uberJar") {
-    archiveClassifier.set("uber")
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    from(sourceSets.main.get().output)
-    dependsOn(configurations.runtimeClasspath)
-    from({
-             configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }
-                 .map { zipTree(it) }
-         })
 }
